@@ -28,6 +28,7 @@
         app:layout_constraintTop_toBottomOf="@+id/username"
         app:layout_constraintBottom_toTopOf="@+id/pattern_lock_view"
         android:gravity="center"
+        android:enabled="false"
         android:text="Start"/>
 
     <com.andrognito.patternlockview.PatternLockView

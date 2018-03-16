@@ -6,6 +6,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 import com.andrognito.patternlockview.PatternLockView;
@@ -59,6 +60,20 @@ public class MainActivity extends AppCompatActivity
             public void afterTextChanged(Editable s)
             {
                 // TODO Auto-generated method stub
+            }
+        });
+        start_stop_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(start_stop_button.getText().equals("Start"))
+                {
+                    start_stop_button.setText("Stop");
+                }
+                else
+                {
+                    start_stop_button.setText("Start");
+                }
             }
         });
     }

@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
                 // TODO Auto-generated method stub
             }
         });
+
         start_stop_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)

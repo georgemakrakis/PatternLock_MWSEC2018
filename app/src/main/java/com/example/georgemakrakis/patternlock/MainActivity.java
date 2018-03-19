@@ -1,11 +1,9 @@
 package com.example.georgemakrakis.patternlock;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,16 +17,17 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
 {
     private PatternLockView mPatternLockView;
     private EditText username;
     private AppCompatButton start_stop_button;
-    private List<String> patternsList = new ArrayList<>();
+    private List<String> patternsList1 = new ArrayList<>();
     private List<String> patternsList2 = new ArrayList<>();
     private boolean flagAtThree = false;
+    private int renterCounter;
+    private int twoIdentical;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +40,7 @@ public class MainActivity extends AppCompatActivity
         start_stop_button = (AppCompatButton) findViewById(R.id.start_stop_button);
 
         mPatternLockView.addPatternLockListener(mPatternLockViewListener);
+        mPatternLockView.setInputEnabled(false);
 
         //Enabling capturing process only if username in not empty
         username.addTextChangedListener(new TextWatcher()
@@ -72,17 +72,20 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        start_stop_button.setOnClickListener(new View.OnClickListener() {
+        start_stop_button.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
-                if(start_stop_button.getText().equals("Start"))
+                if (start_stop_button.getText().equals("Start"))
                 {
                     start_stop_button.setText("Stop");
+                    mPatternLockView.setInputEnabled(true);
                 }
                 else
                 {
                     start_stop_button.setText("Start");
+                    mPatternLockView.setInputEnabled(false);
                 }
             }
         });
@@ -93,6 +96,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onStarted()
         {
+            // TODO: maybe add the check of the 10 patterns here too
             Log.d(getClass().getName(), "Pattern drawing started");
         }
 
@@ -106,37 +110,29 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern)
         {
-            if(pattern.size()>=4)
+            //Separating the two sets of patterns
+            if (patternsList1.size() < 13)
             {
-                String patternNow = PatternLockUtils.patternToString(mPatternLockView, pattern);
-                Log.d(getClass().getName(), "Pattern complete: " +
-                    patternNow);
-
-                if(flagAtThree)
+                RecordPatterns(pattern, patternsList1);
+            }
+            else if (patternsList2.size() < 13)
+            {
+                //Maximum 2 identical patterns can appear between the two 10 - sampled sets
+                if (twoIdentical != 2)
                 {
-                    if(patternsList.contains(patternNow))
+                    if (patternsList1.contains(pattern))
                     {
-                        patternsList.add(patternNow);
+                        twoIdentical++;
+                        RecordPatterns(pattern, patternsList2);
                     }
                     else
                     {
-                        //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
-                        ShowDialog("The pattern you entered is not one of the previous patterns");
+                        RecordPatterns(pattern, patternsList2);
                     }
                 }
                 else
                 {
-                    if (!patternsList.contains(patternNow))
-                    {
-                        patternsList.add(patternNow);
-                    }
-                    else
-                    {
-                        //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
-                        ShowDialog("You have entered the same pattern twice, please enter a different pattern");
-                    }
-
-                    Log.d(getClass().getName(), "Patterns to list: " + patternsList.toString());
+                    ShowDialog("You exceeded the maximum 2 identical patterns in both sets. Please enter a different pattern");
                 }
             }
         }
@@ -146,23 +142,71 @@ public class MainActivity extends AppCompatActivity
         {
             Log.d(getClass().getName(), "Pattern has been cleared");
             //When user reaches the 10 patterns input check if he remembers 3 of them
-            if(patternsList.size()==10)
+            if (patternsList1.size() == 10 || patternsList2.size() == 10)
             {
                 ShowDialog("Now you must enter 3 of your previous patterns");
                 flagAtThree = true;
+                renterCounter = 0;
             }
         }
     };
+
     public void ShowDialog(String Message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(Message)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
                         // do nothing
                     }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    public void RecordPatterns(List<PatternLockView.Dot> pattern, List<String> patternsList)
+    {
+        if (pattern.size() >= 4)
+        {
+            String patternNow = PatternLockUtils.patternToString(mPatternLockView, pattern);
+            Log.d(getClass().getName(), "Pattern complete: " +
+                    patternNow);
+
+            if (flagAtThree && renterCounter < 3)
+            {
+                if (patternsList.contains(patternNow))
+                {
+                    patternsList.add(patternNow);
+                    renterCounter++;
+                }
+                else
+                {
+                    //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
+                    ShowDialog("The pattern you entered is not one of the previous patterns. Now you have to re-enter another 10 patterns");
+                    flagAtThree = false;
+                    patternsList.clear();
+                }
+            }
+            else
+            {
+                if (!patternsList.contains(patternNow))
+                {
+                    patternsList.add(patternNow);
+                }
+                else
+                {
+                    //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
+                    ShowDialog("You have entered the same pattern twice, please enter a different pattern");
+                }
+            }
+            Log.d(getClass().getName(), "Patterns to list 1: " + patternsList1.toString());
+            Log.d(getClass().getName(), "Patterns to list 2: " + patternsList2.toString());
+        }
+        else
+        {
+            ShowDialog("Pattern must be greater than 4 dots");
+        }
     }
 }

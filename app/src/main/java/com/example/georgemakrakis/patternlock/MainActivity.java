@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity
     private PatternLockView mPatternLockView;
     private EditText username;
     private AppCompatButton start_stop_button;
+    private TextView pattern_counter_text;
+
     private List<String> patternsList1 = new ArrayList<>();
     private List<String> patternsList2 = new ArrayList<>();
     private boolean flagAtThree = false;
@@ -38,9 +41,11 @@ public class MainActivity extends AppCompatActivity
         mPatternLockView = (PatternLockView) findViewById(R.id.pattern_lock_view);
         username = (EditText) findViewById(R.id.username);
         start_stop_button = (AppCompatButton) findViewById(R.id.start_stop_button);
+        pattern_counter_text = (TextView) findViewById(R.id.pattern_counter_text);
 
         mPatternLockView.addPatternLockListener(mPatternLockViewListener);
         mPatternLockView.setInputEnabled(false);
+        pattern_counter_text.setText("Patterns entered until now: ");
 
         //Enabling capturing process only if username in not empty
         username.addTextChangedListener(new TextWatcher()
@@ -86,6 +91,9 @@ public class MainActivity extends AppCompatActivity
                 {
                     start_stop_button.setText("Start");
                     mPatternLockView.setInputEnabled(false);
+                    patternsList1 = new ArrayList<>();
+                    patternsList2 = new ArrayList<>();
+                    pattern_counter_text.setText("Patterns entered until now: ");
                 }
             }
         });
@@ -135,6 +143,7 @@ public class MainActivity extends AppCompatActivity
                     ShowDialog("You exceeded the maximum 2 identical patterns in both sets. Please enter a different pattern");
                 }
             }
+            pattern_counter_text.setText("Patterns entered until now: "+(patternsList1.size()+patternsList2.size()));
         }
 
         @Override

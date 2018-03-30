@@ -1,5 +1,6 @@
 package com.example.georgemakrakis.patternlock;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.PointF;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void addTouchListener()
     {
         //activity_main_layout = (ConstraintLayout) findViewById(R.id.activity_main_layout);

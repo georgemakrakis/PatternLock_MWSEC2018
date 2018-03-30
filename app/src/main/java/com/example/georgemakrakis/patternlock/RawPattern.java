@@ -1,17 +1,19 @@
 package com.example.georgemakrakis.patternlock;
 
+import java.util.List;
+
 public class RawPattern
 {
     private String numberOfActivatedPoint;
     private long timeStamp;
-    private String xyPoints;
-    private float pressure;
+    private List<Tuple<Float>> coordinates;
+    private List<Float> pressure;
 
-    public RawPattern(String numberOfActivatedPoint, long timeStamp, String xyPoints, float pressure)
+    public RawPattern(String numberOfActivatedPoint, long timeStamp, List<Tuple<Float>> coordinates, List<Float> pressure)
     {
         this.numberOfActivatedPoint = numberOfActivatedPoint;
         this.timeStamp = timeStamp;
-        this.xyPoints = xyPoints;
+        this.coordinates = coordinates;
         this.pressure = pressure;
     }
 
@@ -35,22 +37,22 @@ public class RawPattern
         this.timeStamp = timeStamp;
     }
 
-    public String getXyPoints()
+    public List<Tuple<Float>> getCoordinates()
     {
-        return xyPoints;
+        return coordinates;
     }
 
-    public void setXyPoints(String xyPoints)
+    public void setCoordinates(List<Tuple<Float>> coordinates)
     {
-        this.xyPoints = xyPoints;
+        this.coordinates = coordinates;
     }
 
-    public float getPressure()
+    public List<Float> getPressure()
     {
         return pressure;
     }
 
-    public void setPressure(float pressure)
+    public void setPressure(List<Float> pressure)
     {
         this.pressure = pressure;
     }

@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     tools:context="com.example.georgemakrakis.patternlock.MainActivity">
 
+
     <EditText
         android:id="@+id/username"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/start_stop_button"
-        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        android:hint="Enter Username"
         android:inputType="text"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:hint="Enter Username"
-        android:gravity="center"/>
+        app:layout_constraintBottom_toTopOf="@+id/start_stop_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/start_stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="Start"
+        app:layout_constraintBottom_toTopOf="@+id/pattern_lock_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username"
-        app:layout_constraintBottom_toTopOf="@+id/pattern_lock_view"
-        android:gravity="center"
-        android:enabled="false"
-        android:text="Start"/>
+        app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <com.andrognito.patternlockview.PatternLockView
         android:id="@+id/pattern_lock_view"
         android:layout_width="280dp"
         android:layout_height="280dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:gravity="center"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/pattern_counter_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pattern_lock_view"
-        android:textColor="@color/white"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/pattern_lock_view" />
 
 </android.support.constraint.ConstraintLayout>

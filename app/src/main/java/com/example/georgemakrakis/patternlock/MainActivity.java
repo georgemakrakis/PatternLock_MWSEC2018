@@ -2,7 +2,12 @@ package com.example.georgemakrakis.patternlock;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.constraint.ConstraintLayout;
@@ -23,6 +28,8 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.hardware.Sensor.TYPE_GYROSCOPE;
+
 public class MainActivity extends AppCompatActivity
 {
     private PatternLockView mPatternLockView;
@@ -30,12 +37,23 @@ public class MainActivity extends AppCompatActivity
     private AppCompatButton start_stop_button;
     private TextView pattern_counter_text;
     private ConstraintLayout activity_main_layout;
+    private SensorManager sensorManager;
+    private Sensor mAccelerometer;
+    private SensorEventListener accelListener;
+    private Sensor mGyroscope;
+    private SensorEventListener gyroListener;
+    private Sensor mLinearAccel;
+    private SensorEventListener linearAccelListener;
 
     private List<String> patternsList1 = new ArrayList<>();
     private List<String> patternsList2 = new ArrayList<>();
     private List<Tuple<Float>> coordinatesList = new ArrayList<>();
     private List<Float> pressureList = new ArrayList<>();
     private List<RawPattern> rawPatterns = new ArrayList<>();
+    private List<TripleData> accelList = new ArrayList<>();
+    private List<TripleData> gyroList = new ArrayList<>();
+    private List<TripleData> laccelList = new ArrayList<>();
+    private List<SensorData> sensorlList = new ArrayList<>();
 
     private boolean flagAtThree = false;
     private int renterCounter;
@@ -55,6 +73,12 @@ public class MainActivity extends AppCompatActivity
         mPatternLockView.addPatternLockListener(mPatternLockViewListener);
         mPatternLockView.setInputEnabled(false);
         pattern_counter_text.setText("Patterns entered until now: ");
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+
 
         //Enabling capturing process only if username in not empty
         username.addTextChangedListener(new TextWatcher()
@@ -109,6 +133,80 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    private void addSensorListener(boolean stop)
+    {
+        if (stop)
+        {
+            sensorManager.unregisterListener(accelListener);
+            sensorManager.unregisterListener(gyroListener);
+            sensorManager.unregisterListener(linearAccelListener);
+        }
+        else
+        {
+            accelListener = new SensorEventListener()
+            {
+                @Override
+                public void onSensorChanged(SensorEvent event)
+                {
+                    TripleData accelData = new TripleData(event.values[0], event.values[1], event.values[2]);
+                    accelList.add(accelData);
+                    //double total = Math.sqrt(x * x + y * y + z * z);
+                    Log.i("Info Accel", " X: " + accelData.x + " Y: " + accelData.y + " Z: " + accelData.z);
+                }
+
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy)
+                {
+
+                }
+
+            };
+
+            gyroListener = new SensorEventListener()
+            {
+                @Override
+                public void onSensorChanged(SensorEvent event)
+                {
+                    TripleData gyroData = new TripleData(event.values[0], event.values[1], event.values[2]);
+                    gyroList.add(gyroData);
+                    //double total = Math.sqrt(x * x + y * y + z * z);
+                    Log.i("Info Gyro", "X: " + gyroData.x + " Y: " + gyroData.y + " Z: " + gyroData.z);
+                }
+
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy)
+                {
+
+                }
+
+            };
+
+            linearAccelListener = new SensorEventListener()
+            {
+                @Override
+                public void onSensorChanged(SensorEvent event)
+                {
+                    TripleData linearAccelData = new TripleData(event.values[0], event.values[1], event.values[2]);
+                    laccelList.add(linearAccelData);
+                    //double total = Math.sqrt(x * x + y * y + z * z);
+                    Log.i("Info Linear Accel", " X: " + linearAccelData.x + " Y: " + linearAccelData.y + " Z: " + linearAccelData.z);
+                }
+
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy)
+                {
+
+                }
+
+            };
+
+            sensorManager.registerListener(accelListener, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener(gyroListener, mGyroscope, SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener(linearAccelListener, mLinearAccel, SensorManager.SENSOR_DELAY_GAME);
+        }
+
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void addTouchListener()
     {
@@ -118,7 +216,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent)
             {
-                Tuple<Float> coordinate = new Tuple<>(motionEvent.getRawX(),motionEvent.getRawY());
+                Tuple<Float> coordinate = new Tuple<>(motionEvent.getRawX(), motionEvent.getRawY());
                 coordinatesList.add(coordinate);
                 //Log.d("TAG", "Coordinates: " + coordinates.x + ", " + coordinates.y);
 
@@ -139,6 +237,11 @@ public class MainActivity extends AppCompatActivity
             Log.d(getClass().getName(), "Pattern drawing started");
             coordinatesList.clear();
             pressureList.clear();
+            accelList.clear();
+            gyroList.clear();
+            laccelList.clear();
+
+            addSensorListener(false);
         }
 
         @Override
@@ -147,17 +250,19 @@ public class MainActivity extends AppCompatActivity
             Log.d(getClass().getName(), "Pattern progress: " +
                     PatternLockUtils.patternToString(mPatternLockView, progressPattern));
 
-            //Getting the last activated point
-            String activatedPoint = PatternLockUtils.patternToString(mPatternLockView, progressPattern).substring
-                    (PatternLockUtils.patternToString(mPatternLockView, progressPattern).length() - 1);
-            long timeStamp = SystemClock.elapsedRealtimeNanos();
-
-            rawPatterns.add(new RawPattern(activatedPoint,timeStamp,coordinatesList,pressureList));
+            //2.2.1
+            RawPatterns(progressPattern);
         }
 
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern)
         {
+            //2.2.2
+            SensorPatterns();
+
+            //Removing the listener on ACTION_UP event
+            addSensorListener(true);
+
             //Separating the two sets of patterns
             if (patternsList1.size() < 13)
             {
@@ -184,8 +289,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             pattern_counter_text.setText("Patterns entered until now: " + (patternsList1.size() + patternsList2.size()));
-            Log.i("Info","Raw Patterns list count: "+rawPatterns.size());
+            Log.i("Info", "Raw Patterns list count: " + rawPatterns.size());
+            Log.i("Info", "Sensors list count: " + sensorlList.size());
 
+            //Calling onCleared here to immediate response for the patterns count
             onCleared();
         }
 
@@ -241,6 +348,9 @@ public class MainActivity extends AppCompatActivity
                     patternsList.clear();
                     coordinatesList.clear();
                     pressureList.clear();
+                    accelList.clear();
+                    gyroList.clear();
+                    laccelList.clear();
                 }
             }
             else
@@ -262,5 +372,22 @@ public class MainActivity extends AppCompatActivity
         {
             ShowDialog("Pattern must be greater than 4 dots");
         }
+    }
+
+    public void RawPatterns(List<PatternLockView.Dot> progressPattern)
+    {
+        //Getting the last activated point
+        String activatedPoint = PatternLockUtils.patternToString(mPatternLockView, progressPattern).substring
+                (PatternLockUtils.patternToString(mPatternLockView, progressPattern).length() - 1);
+        long timeStamp = SystemClock.elapsedRealtimeNanos();
+
+        rawPatterns.add(new RawPattern(activatedPoint, timeStamp, coordinatesList, pressureList));
+    }
+
+    public void SensorPatterns()
+    {
+        long timeStamp = SystemClock.elapsedRealtimeNanos();
+
+        sensorlList.add(new SensorData(timeStamp,accelList,gyroList,laccelList));
     }
 }

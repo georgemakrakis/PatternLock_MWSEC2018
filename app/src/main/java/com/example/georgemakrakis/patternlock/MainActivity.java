@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private List<TripleData> laccelList = new ArrayList<>();
     private List<SensorData> sensorlList = new ArrayList<>();
     private List<PatternMetadata> patternMetadataList = new ArrayList<>();
+    private List<PairMetadata> pairMetadataList = new ArrayList<>();
 
     private boolean flagAtThree = false;
     private int renterCounter;
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity
                     TripleData accelData = new TripleData(event.values[0], event.values[1], event.values[2]);
                     accelList.add(accelData);
                     //double total = Math.sqrt(x * x + y * y + z * z);
-                    Log.i("Info Accel", " X: " + accelData.x + " Y: " + accelData.y + " Z: " + accelData.z);
+                    //Log.d("Info Accel", " X: " + accelData.x + " Y: " + accelData.y + " Z: " + accelData.z);
                 }
 
                 @Override
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity
                     TripleData gyroData = new TripleData(event.values[0], event.values[1], event.values[2]);
                     gyroList.add(gyroData);
                     //double total = Math.sqrt(x * x + y * y + z * z);
-                    Log.i("Info Gyro", "X: " + gyroData.x + " Y: " + gyroData.y + " Z: " + gyroData.z);
+                    //Log.d("Info Gyro", "X: " + gyroData.x + " Y: " + gyroData.y + " Z: " + gyroData.z);
                 }
 
                 @Override
@@ -218,7 +220,7 @@ public class MainActivity extends AppCompatActivity
                     TripleData linearAccelData = new TripleData(event.values[0], event.values[1], event.values[2]);
                     laccelList.add(linearAccelData);
                     //double total = Math.sqrt(x * x + y * y + z * z);
-                    Log.i("Info Linear Accel", " X: " + linearAccelData.x + " Y: " + linearAccelData.y + " Z: " + linearAccelData.z);
+                    //Log.d("Info Linear Accel", " X: " + linearAccelData.x + " Y: " + linearAccelData.y + " Z: " + linearAccelData.z);
                 }
 
                 @Override
@@ -247,7 +249,7 @@ public class MainActivity extends AppCompatActivity
             {
                 Tuple<Float> coordinate = new Tuple<>(motionEvent.getRawX(), motionEvent.getRawY());
                 coordinatesList.add(coordinate);
-                //Log.d("TAG", "Coordinates: " + coordinates.x + ", " + coordinates.y);
+                Log.d("TAG", "Coordinates: " + coordinate.x + ", " + coordinate.y);
 
                 pressureList.add(motionEvent.getPressure());
                 //Log.d("TAG", "Pressure: "+pressure);
@@ -515,5 +517,25 @@ public class MainActivity extends AppCompatActivity
 
         patternMetadataList.add(patternMetadata);
 
+    }
+
+    public void PairMetadata(String pattern)
+    {
+        //Getting the screen resolution
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        String resolution = metrics.heightPixels+", "+metrics.widthPixels;
+
+        for(int i = 0; i < pattern.length(); i++)
+        {
+            int A = ((int) pattern.charAt(i));
+            int B = ((int) pattern.charAt(i + 1));
+//            PairMetadata pairMetadata = new PairMetadata(
+//                    username.getText().toString(),patternsList1.size()+patternsList2.size(), resolution,A,B,
+//                    );
+//
+//            pairMetadataList.add(pairMetadata);
+        }
     }
 }

@@ -15,7 +15,10 @@ public class PatternMetadata
     private int handNum;
     private int fingerNum;
 
-    public PatternMetadata(String username, int attempt, String sequence, int sequenceLength, long timeToComplete, double patternLength, double avgSpeed, float avgPressure, float highestPressure, float lowestPressure, int handNum, int fingerNum) {
+    public PatternMetadata(String username, int attempt, String sequence, int sequenceLength,
+                           long timeToComplete, double patternLength, double avgSpeed, float avgPressure,
+                           float highestPressure, float lowestPressure, int handNum, int fingerNum)
+    {
         this.username = username;
         this.attempt = attempt;
         this.sequence = sequence;

@@ -18,7 +18,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.andrognito.patternlockview.PatternLockView;
@@ -26,6 +28,7 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity
     private SensorEventListener gyroListener;
     private Sensor mLinearAccel;
     private SensorEventListener linearAccelListener;
+    private Spinner spinnerFinger;
+    private Spinner spinnerHand;
 
     private List<String> patternsList1 = new ArrayList<>();
     private List<String> patternsList2 = new ArrayList<>();
@@ -55,10 +60,14 @@ public class MainActivity extends AppCompatActivity
     private List<TripleData> gyroList = new ArrayList<>();
     private List<TripleData> laccelList = new ArrayList<>();
     private List<SensorData> sensorlList = new ArrayList<>();
+    private List<PatternMetadata> patternMetadataList = new ArrayList<>();
 
     private boolean flagAtThree = false;
     private int renterCounter;
     private int twoIdentical;
+
+    private long timeStampDown;
+    private long timeStampUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,6 +89,21 @@ public class MainActivity extends AppCompatActivity
         mGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         mLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
+        String[] itemsHand = new String[]{"Right Hand", "Left Hand"};
+        spinnerHand = (Spinner) findViewById(R.id.spinnerHand);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, itemsHand);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerHand.setAdapter(adapter);
+
+        String[] itemsFinger = new String[]{"1st Finger", "2nd Finger","3rd Finger","4th Finger","5th Finger"};
+        spinnerFinger = (Spinner) findViewById(R.id.spinnerFinger);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, R.layout.spinner_item, itemsFinger);
+        // Specify the layout to use when the list of choices appears
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFinger.setAdapter(adapter2);
 
         //Enabling capturing process only if username in not empty
         username.addTextChangedListener(new TextWatcher()
@@ -120,12 +144,16 @@ public class MainActivity extends AppCompatActivity
                 {
                     start_stop_button.setText("Stop");
                     mPatternLockView.setInputEnabled(true);
+                    spinnerFinger.setEnabled(false);
+                    spinnerHand.setEnabled(false);
                     addTouchListener();
                 }
                 else
                 {
                     start_stop_button.setText("Start");
                     mPatternLockView.setInputEnabled(false);
+                    spinnerFinger.setEnabled(true);
+                    spinnerHand.setEnabled(true);
                     patternsList1.clear();
                     patternsList2.clear();
                     pattern_counter_text.setText("Patterns entered until now: ");
@@ -242,6 +270,8 @@ public class MainActivity extends AppCompatActivity
             gyroList.clear();
             laccelList.clear();
 
+            timeStampDown = SystemClock.elapsedRealtimeNanos();
+
             addSensorListener(false);
         }
 
@@ -258,11 +288,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern)
         {
+            timeStampUp = SystemClock.elapsedRealtimeNanos();
+
             //2.2.2
             SensorPatterns();
-
-            //2.2.3
-            Metadata();
 
             //Removing the listener on ACTION_UP event
             addSensorListener(true);
@@ -295,6 +324,11 @@ public class MainActivity extends AppCompatActivity
             pattern_counter_text.setText("Patterns entered until now: " + (patternsList1.size() + patternsList2.size()));
             Log.i("Info", "Raw Patterns list count: " + rawPatterns.size());
             Log.i("Info", "Sensors list count: " + sensorlList.size());
+
+            //2.2.3
+            Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern), PatternLockUtils.patternToString(mPatternLockView, pattern).length());
+
+            Log.i("Info", "Pattern metadata count: " + patternMetadataList.size());
 
             //Calling onCleared here to immediate response for the patterns count
             onCleared();
@@ -395,7 +429,7 @@ public class MainActivity extends AppCompatActivity
         sensorlList.add(new SensorData(timeStamp, accelList, gyroList, laccelList));
     }
 
-    public void Metadata()
+    public void Metadata(String sequense,int sequenceLength)
     {
         List<Tuple<Float>> pointsList = new ArrayList<>();
         int numOfPoints = (int) (coordinatesList.size() * 0.6);
@@ -434,5 +468,52 @@ public class MainActivity extends AppCompatActivity
             distance += Math.sqrt((tempX2 + tempY2));
         }
         Log.i("Info", "Pattern Distance: " + distance);
+
+        double pressureSum =0;
+        for (float p:pressureList)
+        {
+            pressureSum+=p;
+        }
+
+        int handNum = 0;
+        if(spinnerHand.getSelectedItem().equals("Right Hand"))
+        {
+            handNum = 2;
+        }
+        else if(spinnerHand.getSelectedItem().equals("Left Hand"))
+        {
+            handNum = 1;
+        }
+
+        int fingerNum = 0;
+        if(spinnerFinger.getSelectedItem().equals("1st Finger"))
+        {
+            fingerNum = 1;
+        }
+        else if(spinnerFinger.getSelectedItem().equals("2nd Finger"))
+        {
+            fingerNum = 2;
+        }
+        else if(spinnerFinger.getSelectedItem().equals("3rd Finger"))
+        {
+            fingerNum = 3;
+        }
+        else if(spinnerFinger.getSelectedItem().equals("4th Finger"))
+        {
+            fingerNum = 4;
+        }
+        else if(spinnerFinger.getSelectedItem().equals("5th Finger"))
+        {
+            fingerNum = 5;
+        }
+
+        //Patterns Lists size here represents the sequence number of the pattern the user enters
+        PatternMetadata patternMetadata = new PatternMetadata(
+                username.getText().toString(),patternsList1.size()+patternsList2.size(),sequense,sequenceLength,timeStampUp-timeStampDown,
+                distance,distance/(timeStampUp-timeStampDown),(float)pressureSum/pressureList.size(), Collections.max(pressureList),
+                Collections.min(pressureList),handNum,fingerNum);
+
+        patternMetadataList.add(patternMetadata);
+
     }
 }

@@ -27,6 +27,7 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static android.hardware.Sensor.TYPE_GYROSCOPE;
 
@@ -260,6 +261,9 @@ public class MainActivity extends AppCompatActivity
             //2.2.2
             SensorPatterns();
 
+            //2.2.3
+            Metadata();
+
             //Removing the listener on ACTION_UP event
             addSensorListener(true);
 
@@ -388,6 +392,47 @@ public class MainActivity extends AppCompatActivity
     {
         long timeStamp = SystemClock.elapsedRealtimeNanos();
 
-        sensorlList.add(new SensorData(timeStamp,accelList,gyroList,laccelList));
+        sensorlList.add(new SensorData(timeStamp, accelList, gyroList, laccelList));
+    }
+
+    public void Metadata()
+    {
+        List<Tuple<Float>> pointsList = new ArrayList<>();
+        int numOfPoints = (int) (coordinatesList.size() * 0.6);
+
+        //Coping the list so we can remove objects later
+        List<Tuple<Float>> coordinatesListCopy = coordinatesList;
+
+        //Adding the first and the last point of the pattern just to be sure
+        pointsList.add(coordinatesListCopy.get(0));
+        pointsList.add(coordinatesListCopy.get(coordinatesListCopy.size() - 1));
+
+        //Then iterating through the other points
+        for (int i = 0; i < numOfPoints; i++)
+        {
+            Random r = new Random();
+            int index = r.nextInt(((coordinatesListCopy.size() - 1) - 1) + 1) + 1;
+
+            pointsList.add(coordinatesListCopy.get(index));
+            coordinatesListCopy.remove(index);
+        }
+
+        double distance = 0.0;
+        for (int i = 1; i < pointsList.size(); i++)
+        {
+            float tempFirst = pointsList.get(i - 1).x;
+            float tempSecond = pointsList.get((i)).x;
+            float tempYFirst = pointsList.get(i - 1).y;
+            float tempYSecond = pointsList.get((i)).y;
+
+            float xValue = tempFirst - tempSecond;
+            float yValue = tempYFirst - tempYSecond;
+
+            double tempX2 = Math.pow(xValue, 2);
+            double tempY2 = Math.pow(yValue, 2);
+
+            distance += Math.sqrt((tempX2 + tempY2));
+        }
+        Log.i("Info", "Pattern Distance: " + distance);
     }
 }

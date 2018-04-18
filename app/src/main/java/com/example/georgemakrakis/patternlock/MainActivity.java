@@ -531,11 +531,32 @@ public class MainActivity extends AppCompatActivity
         {
             int A = ((int) pattern.charAt(i));
             int B = ((int) pattern.charAt(i + 1));
+
+            int columnA = PatternLockView.Dot.of(A).getColumn();
+            int rowA = PatternLockView.Dot.of(A).getRow();
+
+            int columnB = PatternLockView.Dot.of(A).getColumn();
+            int rowB = PatternLockView.Dot.of(A).getRow();
+
+            Tuple<Float> centralCoordsA = new Tuple<>(getCenterXForColumn(columnA),getCenterYForRow(rowA));
+            Tuple<Float> centralCoordsB = new Tuple<>(getCenterXForColumn(columnB),getCenterYForRow(rowB));
+
 //            PairMetadata pairMetadata = new PairMetadata(
-//                    username.getText().toString(),patternsList1.size()+patternsList2.size(), resolution,A,B,
+//                    username.getText().toString(),patternsList1.size()+patternsList2.size(), resolution,A,B,centralCoordsA,centralCoordsB,
 //                    );
 //
 //            pairMetadataList.add(pairMetadata);
         }
+    }
+
+    //These functions come from the source code of the initial PatternLockView project (https://github.com/aritraroy/PatternLockView)
+    private float getCenterXForColumn(int column)
+    {
+        return mPatternLockView.getPaddingLeft() + column * mPatternLockView.getWidth() + mPatternLockView.getWidth() / 2f;
+    }
+
+    private float getCenterYForRow(int row)
+    {
+        return mPatternLockView.getPaddingTop() + row * mPatternLockView.getHeight() + mPatternLockView.getHeight() / 2f;
     }
 }

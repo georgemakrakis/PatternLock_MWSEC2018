@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     private List<String> patternsList2 = new ArrayList<>();
     private List<Tuple<Float>> coordinatesList = new ArrayList<>();
     private List<Float> pressureList = new ArrayList<>();
-    private List<RawPattern> rawPatterns = new ArrayList<>();
+    private List<RawPattern> rawPatternsList = new ArrayList<>();
     private List<TripleData> accelList = new ArrayList<>();
     private List<TripleData> gyroList = new ArrayList<>();
     private List<TripleData> laccelList = new ArrayList<>();
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerHand.setAdapter(adapter);
 
-        String[] itemsFinger = new String[]{"1st Finger", "2nd Finger","3rd Finger","4th Finger","5th Finger"};
+        String[] itemsFinger = new String[]{"1st Finger", "2nd Finger", "3rd Finger", "4th Finger", "5th Finger"};
         spinnerFinger = (Spinner) findViewById(R.id.spinnerFinger);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, R.layout.spinner_item, itemsFinger);
@@ -324,13 +324,18 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             pattern_counter_text.setText("Patterns entered until now: " + (patternsList1.size() + patternsList2.size()));
-            Log.i("Info", "Raw Patterns list count: " + rawPatterns.size());
+            Log.i("Info", "Raw Patterns list count: " + rawPatternsList.size());
             Log.i("Info", "Sensors list count: " + sensorlList.size());
 
             //2.2.3
-            Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern), PatternLockUtils.patternToString(mPatternLockView, pattern).length());
+            Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
+                    PatternLockUtils.patternToString(mPatternLockView, pattern).length());
 
             Log.i("Info", "Pattern metadata count: " + patternMetadataList.size());
+
+            PairMetadata(PatternLockUtils.patternToString(mPatternLockView, pattern));
+
+            Log.i("Info", "Pair metadata count: " + pairMetadataList.size());
 
             //Calling onCleared here to immediate response for the patterns count
             onCleared();
@@ -421,7 +426,7 @@ public class MainActivity extends AppCompatActivity
                 (PatternLockUtils.patternToString(mPatternLockView, progressPattern).length() - 1);
         long timeStamp = SystemClock.elapsedRealtimeNanos();
 
-        rawPatterns.add(new RawPattern(activatedPoint, timeStamp, coordinatesList, pressureList));
+        rawPatternsList.add(new RawPattern(activatedPoint, timeStamp, coordinatesList, pressureList));
     }
 
     public void SensorPatterns()
@@ -431,7 +436,7 @@ public class MainActivity extends AppCompatActivity
         sensorlList.add(new SensorData(timeStamp, accelList, gyroList, laccelList));
     }
 
-    public void Metadata(String sequense,int sequenceLength)
+    public void Metadata(String sequense, int sequenceLength)
     {
         List<Tuple<Float>> pointsList = new ArrayList<>();
         int numOfPoints = (int) (coordinatesList.size() * 0.6);
@@ -471,49 +476,49 @@ public class MainActivity extends AppCompatActivity
         }
         Log.i("Info", "Pattern Distance: " + distance);
 
-        double pressureSum =0;
-        for (float p:pressureList)
+        double pressureSum = 0;
+        for (float p : pressureList)
         {
-            pressureSum+=p;
+            pressureSum += p;
         }
 
         int handNum = 0;
-        if(spinnerHand.getSelectedItem().equals("Right Hand"))
+        if (spinnerHand.getSelectedItem().equals("Right Hand"))
         {
             handNum = 2;
         }
-        else if(spinnerHand.getSelectedItem().equals("Left Hand"))
+        else if (spinnerHand.getSelectedItem().equals("Left Hand"))
         {
             handNum = 1;
         }
 
         int fingerNum = 0;
-        if(spinnerFinger.getSelectedItem().equals("1st Finger"))
+        if (spinnerFinger.getSelectedItem().equals("1st Finger"))
         {
             fingerNum = 1;
         }
-        else if(spinnerFinger.getSelectedItem().equals("2nd Finger"))
+        else if (spinnerFinger.getSelectedItem().equals("2nd Finger"))
         {
             fingerNum = 2;
         }
-        else if(spinnerFinger.getSelectedItem().equals("3rd Finger"))
+        else if (spinnerFinger.getSelectedItem().equals("3rd Finger"))
         {
             fingerNum = 3;
         }
-        else if(spinnerFinger.getSelectedItem().equals("4th Finger"))
+        else if (spinnerFinger.getSelectedItem().equals("4th Finger"))
         {
             fingerNum = 4;
         }
-        else if(spinnerFinger.getSelectedItem().equals("5th Finger"))
+        else if (spinnerFinger.getSelectedItem().equals("5th Finger"))
         {
             fingerNum = 5;
         }
 
         //Patterns Lists size here represents the sequence number of the pattern the user enters
         PatternMetadata patternMetadata = new PatternMetadata(
-                username.getText().toString(),patternsList1.size()+patternsList2.size(),sequense,sequenceLength,timeStampUp-timeStampDown,
-                distance,distance/(timeStampUp-timeStampDown),(float)pressureSum/pressureList.size(), Collections.max(pressureList),
-                Collections.min(pressureList),handNum,fingerNum);
+                username.getText().toString(), patternsList1.size() + patternsList2.size(), sequense, sequenceLength, timeStampUp - timeStampDown,
+                distance, distance / (timeStampUp - timeStampDown), (float) pressureSum / pressureList.size(), Collections.max(pressureList),
+                Collections.min(pressureList), handNum, fingerNum);
 
         patternMetadataList.add(patternMetadata);
 
@@ -525,27 +530,71 @@ public class MainActivity extends AppCompatActivity
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        String resolution = metrics.heightPixels+", "+metrics.widthPixels;
+        String resolution = metrics.heightPixels + ", " + metrics.widthPixels;
 
-        for(int i = 0; i < pattern.length(); i++)
+        for (int i = 0; i < pattern.length()-1; i++)
         {
-            int A = ((int) pattern.charAt(i));
-            int B = ((int) pattern.charAt(i + 1));
+            int A = Character.getNumericValue(pattern.charAt(i));
+            int B = Character.getNumericValue(pattern.charAt(i + 1));
 
             int columnA = PatternLockView.Dot.of(A).getColumn();
             int rowA = PatternLockView.Dot.of(A).getRow();
 
-            int columnB = PatternLockView.Dot.of(A).getColumn();
-            int rowB = PatternLockView.Dot.of(A).getRow();
+            int columnB = PatternLockView.Dot.of(B).getColumn();
+            int rowB = PatternLockView.Dot.of(B).getRow();
 
-            Tuple<Float> centralCoordsA = new Tuple<>(getCenterXForColumn(columnA),getCenterYForRow(rowA));
-            Tuple<Float> centralCoordsB = new Tuple<>(getCenterXForColumn(columnB),getCenterYForRow(rowB));
+            Tuple<Float> centralCoordsA = new Tuple<>(getCenterXForColumn(columnA), getCenterYForRow(rowA));
+            Tuple<Float> centralCoordsB = new Tuple<>(getCenterXForColumn(columnB), getCenterYForRow(rowB));
 
-//            PairMetadata pairMetadata = new PairMetadata(
-//                    username.getText().toString(),patternsList1.size()+patternsList2.size(), resolution,A,B,centralCoordsA,centralCoordsB,
-//                    );
-//
-//            pairMetadataList.add(pairMetadata);
+            Tuple<Float> firstCoordsA = null;
+            Tuple<Float> lastCoordsB = null;
+
+            for (RawPattern rP : rawPatternsList)
+            {
+                if (rP.getNumberOfActivatedPoint().equals(Integer.toString(A)))
+                {
+                    firstCoordsA = rP.getCoordinates().get(0);
+                    break;
+                }
+            }
+
+            for (RawPattern rP : rawPatternsList)
+            {
+                if (rP.getNumberOfActivatedPoint().equals(Integer.toString(B)))
+                {
+                    lastCoordsB = rP.getCoordinates().get(rP.getCoordinates().size()-1);
+                    break;
+                }
+            }
+
+            double distanceAB = Math.hypot(firstCoordsA.x - lastCoordsB.x, firstCoordsA.y - lastCoordsB.y);
+
+            Float pressureSum = 0.0f;
+            for (RawPattern rP : rawPatternsList)
+            {
+                if (rP.getNumberOfActivatedPoint().equals(Integer.toString(A)))
+                {
+                    for (Float pressure : rP.getPressure())
+                    {
+                        pressureSum += pressure;
+                    }
+                }
+                else if (rP.getNumberOfActivatedPoint().equals(Integer.toString(B)))
+                {
+                    for (Float pressure : rP.getPressure())
+                    {
+                        pressureSum += pressure;
+                    }
+                }
+            }
+
+            PairMetadata pairMetadata = new PairMetadata(
+                    username.getText().toString(), patternsList1.size() + patternsList2.size(),
+                    resolution, A, B, centralCoordsA, centralCoordsB, firstCoordsA, lastCoordsB,
+                    distanceAB, timeStampUp - timeStampDown,
+                    distanceAB / timeStampUp - timeStampDown, pressureSum / pressureList.size());
+
+            pairMetadataList.add(pairMetadata);
         }
     }
 

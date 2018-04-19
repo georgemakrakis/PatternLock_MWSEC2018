@@ -595,6 +595,7 @@ public class MainActivity extends AppCompatActivity
                     distanceAB / timeStampUp - timeStampDown, pressureSum / pressureList.size());
 
             pairMetadataList.add(pairMetadata);
+
         }
     }
 

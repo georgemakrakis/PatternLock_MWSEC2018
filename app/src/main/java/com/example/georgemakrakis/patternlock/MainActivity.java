@@ -504,14 +504,7 @@ public class MainActivity extends AppCompatActivity
         List<Tuple<Float>> coordinatesListCopy = coordinatesList;
 
         //Adding the first and the last point of the pattern just to be sure
-        try
-        {
-            pointsList.add(coordinatesListCopy.get(0));
-        }
-        catch (IndexOutOfBoundsException ex)
-        {
-            Log.e("Error",ex.toString());
-        }
+        pointsList.add(coordinatesListCopy.get(0));
         pointsList.add(coordinatesListCopy.get(coordinatesListCopy.size() - 1));
 
         //Then iterating through the other points

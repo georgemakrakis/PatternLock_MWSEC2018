@@ -158,10 +158,20 @@ public class MainActivity extends AppCompatActivity
                     spinnerHand.setEnabled(true);
                     patternsList1.clear();
                     patternsList2.clear();
+                    coordinatesList.clear();
+                    pressureList.clear();
+                    rawPatternsList.clear();
+                    accelList.clear();
+                    gyroList.clear();
+                    laccelList.clear();
+                    sensorlList.clear();
+                    patternMetadataList.clear();
+                    pairMetadataList.clear();
                     pattern_counter_text.setText("Patterns entered until now: ");
                 }
             }
         });
+
     }
 
     private void addSensorListener(boolean stop)
@@ -301,7 +311,18 @@ public class MainActivity extends AppCompatActivity
             //Separating the two sets of patterns
             if (patternsList1.size() < 13)
             {
-                RecordPatterns(pattern, patternsList1);
+                if(RecordPatterns(pattern, patternsList1))
+                {
+                    //2.2.3
+                    Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
+                            PatternLockUtils.patternToString(mPatternLockView, pattern).length());
+
+                    Log.i("Info", "Pattern metadata count: " + patternMetadataList.size());
+
+                    PairMetadata(PatternLockUtils.patternToString(mPatternLockView, pattern));
+
+                    Log.i("Info", "Pair metadata count: " + pairMetadataList.size());
+                }
             }
             else if (patternsList2.size() < 13)
             {
@@ -311,11 +332,34 @@ public class MainActivity extends AppCompatActivity
                     if (patternsList1.contains(pattern))
                     {
                         twoIdentical++;
-                        RecordPatterns(pattern, patternsList2);
+                        if(RecordPatterns(pattern, patternsList2))
+                        {
+                            //2.2.3
+                            Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
+                                    PatternLockUtils.patternToString(mPatternLockView, pattern).length());
+
+                            Log.i("Info", "Pattern metadata count: " + patternMetadataList.size());
+
+                            PairMetadata(PatternLockUtils.patternToString(mPatternLockView, pattern));
+
+                            Log.i("Info", "Pair metadata count: " + pairMetadataList.size());
+                        }
+
                     }
                     else
                     {
-                        RecordPatterns(pattern, patternsList2);
+                        if(RecordPatterns(pattern, patternsList2))
+                        {
+                            //2.2.3
+                            Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
+                                    PatternLockUtils.patternToString(mPatternLockView, pattern).length());
+
+                            Log.i("Info", "Pattern metadata count: " + patternMetadataList.size());
+
+                            PairMetadata(PatternLockUtils.patternToString(mPatternLockView, pattern));
+
+                            Log.i("Info", "Pair metadata count: " + pairMetadataList.size());
+                        }
                     }
                 }
                 else
@@ -327,15 +371,7 @@ public class MainActivity extends AppCompatActivity
             Log.i("Info", "Raw Patterns list count: " + rawPatternsList.size());
             Log.i("Info", "Sensors list count: " + sensorlList.size());
 
-            //2.2.3
-            Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
-                    PatternLockUtils.patternToString(mPatternLockView, pattern).length());
 
-            Log.i("Info", "Pattern metadata count: " + patternMetadataList.size());
-
-            PairMetadata(PatternLockUtils.patternToString(mPatternLockView, pattern));
-
-            Log.i("Info", "Pair metadata count: " + pairMetadataList.size());
 
             //Calling onCleared here to immediate response for the patterns count
             onCleared();
@@ -351,6 +387,11 @@ public class MainActivity extends AppCompatActivity
                 ShowDialog("Now you must enter 3 of your previous patterns");
                 flagAtThree = true;
                 renterCounter = 0;
+            }
+
+            if(patternsList1.size() + patternsList2.size() == 26)
+            {
+
             }
         }
     };
@@ -370,7 +411,7 @@ public class MainActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-    public void RecordPatterns(List<PatternLockView.Dot> pattern, List<String> patternsList)
+    public boolean RecordPatterns(List<PatternLockView.Dot> pattern, List<String> patternsList)
     {
         if (pattern.size() >= 4)
         {
@@ -384,6 +425,10 @@ public class MainActivity extends AppCompatActivity
                 {
                     patternsList.add(patternNow);
                     renterCounter++;
+                    Log.d(getClass().getName(), "Patterns to list 1: " + patternsList1.toString());
+                    Log.d(getClass().getName(), "Patterns to list 2: " + patternsList2.toString());
+
+                    return true;
                 }
                 else
                 {
@@ -393,9 +438,15 @@ public class MainActivity extends AppCompatActivity
                     patternsList.clear();
                     coordinatesList.clear();
                     pressureList.clear();
+                    rawPatternsList.clear();
                     accelList.clear();
                     gyroList.clear();
                     laccelList.clear();
+                    sensorlList.clear();
+                    patternMetadataList.clear();
+                    pairMetadataList.clear();
+
+                    return false;
                 }
             }
             else
@@ -403,19 +454,27 @@ public class MainActivity extends AppCompatActivity
                 if (!patternsList.contains(patternNow))
                 {
                     patternsList.add(patternNow);
+
+                    Log.d(getClass().getName(), "Patterns to list 1: " + patternsList1.toString());
+                    Log.d(getClass().getName(), "Patterns to list 2: " + patternsList2.toString());
+
+                    return true;
                 }
                 else
                 {
                     //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
                     ShowDialog("You have entered the same pattern twice, please enter a different pattern");
+
+                    return false;
                 }
             }
-            Log.d(getClass().getName(), "Patterns to list 1: " + patternsList1.toString());
-            Log.d(getClass().getName(), "Patterns to list 2: " + patternsList2.toString());
+
         }
         else
         {
             ShowDialog("Pattern must be greater than 4 dots");
+
+            return false;
         }
     }
 
@@ -445,7 +504,14 @@ public class MainActivity extends AppCompatActivity
         List<Tuple<Float>> coordinatesListCopy = coordinatesList;
 
         //Adding the first and the last point of the pattern just to be sure
-        pointsList.add(coordinatesListCopy.get(0));
+        try
+        {
+            pointsList.add(coordinatesListCopy.get(0));
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+            Log.e("Error",ex.toString());
+        }
         pointsList.add(coordinatesListCopy.get(coordinatesListCopy.size() - 1));
 
         //Then iterating through the other points
@@ -532,7 +598,7 @@ public class MainActivity extends AppCompatActivity
 
         String resolution = metrics.heightPixels + ", " + metrics.widthPixels;
 
-        for (int i = 0; i < pattern.length()-1; i++)
+        for (int i = 0; i < pattern.length() - 1; i++)
         {
             int A = Character.getNumericValue(pattern.charAt(i));
             int B = Character.getNumericValue(pattern.charAt(i + 1));
@@ -545,6 +611,9 @@ public class MainActivity extends AppCompatActivity
 
             Tuple<Float> centralCoordsA = new Tuple<>(getCenterXForColumn(columnA), getCenterYForRow(rowA));
             Tuple<Float> centralCoordsB = new Tuple<>(getCenterXForColumn(columnB), getCenterYForRow(rowB));
+
+//            Log.d("Coord dot",""+centralCoordsA.x+","+centralCoordsA.y);
+//            Log.d("Coord dot",""+centralCoordsB.x+","+centralCoordsB.y);
 
             Tuple<Float> firstCoordsA = null;
             Tuple<Float> lastCoordsB = null;
@@ -562,7 +631,7 @@ public class MainActivity extends AppCompatActivity
             {
                 if (rP.getNumberOfActivatedPoint().equals(Integer.toString(B)))
                 {
-                    lastCoordsB = rP.getCoordinates().get(rP.getCoordinates().size()-1);
+                    lastCoordsB = rP.getCoordinates().get(rP.getCoordinates().size() - 1);
                     break;
                 }
             }

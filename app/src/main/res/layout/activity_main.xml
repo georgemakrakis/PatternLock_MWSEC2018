@@ -29,20 +29,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/start_stop_button"
+        app:layout_constraintHorizontal_bias="0.768"
+        app:layout_constraintLeft_toLeftOf="@id/spinnerFinger"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/spinnerFinger" />
+        app:layout_constraintVertical_bias="0.565" />
 
     <Spinner
         android:id="@+id/spinnerFinger"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="64dp"
         android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/start_stop_button"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/start_stop_button" />
+        app:layout_constraintVertical_bias="0.543" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/start_stop_button"

@@ -27,4 +27,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compile 'com.andrognito.patternlockview:patternlockview:1.0.0'
+    compile 'com.opencsv:opencsv:4.1'
 }

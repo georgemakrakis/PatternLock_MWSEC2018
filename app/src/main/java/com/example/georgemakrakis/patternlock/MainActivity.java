@@ -27,13 +27,15 @@ import android.widget.TextView;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
+import com.opencsv.CSVWriter;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import static android.hardware.Sensor.TYPE_GYROSCOPE;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -56,13 +58,15 @@ public class MainActivity extends AppCompatActivity
     private List<String> patternsList2 = new ArrayList<>();
     private List<Tuple<Float>> coordinatesList = new ArrayList<>();
     private List<Float> pressureList = new ArrayList<>();
-    private List<RawPattern> rawPatternsList = new ArrayList<>();
+    private List<RawPattern> rawPatternsTempList = new ArrayList<>();
     private List<TripleData> accelList = new ArrayList<>();
     private List<TripleData> gyroList = new ArrayList<>();
     private List<TripleData> laccelList = new ArrayList<>();
     private List<SensorData> sensorlList = new ArrayList<>();
     private List<PatternMetadata> patternMetadataList = new ArrayList<>();
     private List<PairMetadata> pairMetadataList = new ArrayList<>();
+    private ArrayList<String> rawPatternsList = new ArrayList<>();
+    private List<List<String>> finalRawPatternFile = new ArrayList<>();
 
     private boolean flagAtThree = false;
     private int renterCounter;
@@ -160,13 +164,14 @@ public class MainActivity extends AppCompatActivity
                     patternsList2.clear();
                     coordinatesList.clear();
                     pressureList.clear();
-                    rawPatternsList.clear();
+                    rawPatternsTempList.clear();
                     accelList.clear();
                     gyroList.clear();
                     laccelList.clear();
                     sensorlList.clear();
                     patternMetadataList.clear();
                     pairMetadataList.clear();
+                    rawPatternsList.clear();
                     pattern_counter_text.setText("Patterns entered until now: ");
                 }
             }
@@ -311,7 +316,7 @@ public class MainActivity extends AppCompatActivity
             //Separating the two sets of patterns
             if (patternsList1.size() < 13)
             {
-                if(RecordPatterns(pattern, patternsList1))
+                if (RecordPatterns(pattern, patternsList1))
                 {
                     //2.2.3
                     Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
@@ -332,7 +337,7 @@ public class MainActivity extends AppCompatActivity
                     if (patternsList1.contains(pattern))
                     {
                         twoIdentical++;
-                        if(RecordPatterns(pattern, patternsList2))
+                        if (RecordPatterns(pattern, patternsList2))
                         {
                             //2.2.3
                             Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
@@ -348,7 +353,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     else
                     {
-                        if(RecordPatterns(pattern, patternsList2))
+                        if (RecordPatterns(pattern, patternsList2))
                         {
                             //2.2.3
                             Metadata(PatternLockUtils.patternToString(mPatternLockView, pattern),
@@ -368,9 +373,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             pattern_counter_text.setText("Patterns entered until now: " + (patternsList1.size() + patternsList2.size()));
-            Log.i("Info", "Raw Patterns list count: " + rawPatternsList.size());
+            Log.i("Info", "Raw Patterns list count: " + rawPatternsTempList.size());
             Log.i("Info", "Sensors list count: " + sensorlList.size());
-
 
 
             //Calling onCleared here to immediate response for the patterns count
@@ -389,10 +393,16 @@ public class MainActivity extends AppCompatActivity
                 renterCounter = 0;
             }
 
-            if(patternsList1.size() + patternsList2.size() == 26)
+            if (patternsList1.size() + patternsList2.size() == 26)
             {
-
+                //TODO save data and move to the next page
+                finalRawPatternFile.add(rawPatternsList);
+                writeCSVFiles();
             }
+
+            finalRawPatternFile.add((List<String>) rawPatternsList.clone());
+
+            rawPatternsList.clear();
         }
     };
 
@@ -438,13 +448,15 @@ public class MainActivity extends AppCompatActivity
                     patternsList.clear();
                     coordinatesList.clear();
                     pressureList.clear();
-                    rawPatternsList.clear();
+                    rawPatternsTempList.clear();
                     accelList.clear();
                     gyroList.clear();
                     laccelList.clear();
                     sensorlList.clear();
                     patternMetadataList.clear();
                     pairMetadataList.clear();
+
+                    rawPatternsList.clear();
 
                     return false;
                 }
@@ -485,7 +497,11 @@ public class MainActivity extends AppCompatActivity
                 (PatternLockUtils.patternToString(mPatternLockView, progressPattern).length() - 1);
         long timeStamp = SystemClock.elapsedRealtimeNanos();
 
-        rawPatternsList.add(new RawPattern(activatedPoint, timeStamp, coordinatesList, pressureList));
+        rawPatternsTempList.add(new RawPattern(activatedPoint, timeStamp, coordinatesList, pressureList));
+
+        rawPatternsList.add(rawPatternsTempList.get(rawPatternsTempList.size() - 1).toString());
+
+        coordinatesList.clear();
     }
 
     public void SensorPatterns()
@@ -611,7 +627,7 @@ public class MainActivity extends AppCompatActivity
             Tuple<Float> firstCoordsA = null;
             Tuple<Float> lastCoordsB = null;
 
-            for (RawPattern rP : rawPatternsList)
+            for (RawPattern rP : rawPatternsTempList)
             {
                 if (rP.getNumberOfActivatedPoint().equals(Integer.toString(A)))
                 {
@@ -620,7 +636,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            for (RawPattern rP : rawPatternsList)
+            for (RawPattern rP : rawPatternsTempList)
             {
                 if (rP.getNumberOfActivatedPoint().equals(Integer.toString(B)))
                 {
@@ -632,7 +648,7 @@ public class MainActivity extends AppCompatActivity
             double distanceAB = Math.hypot(firstCoordsA.x - lastCoordsB.x, firstCoordsA.y - lastCoordsB.y);
 
             Float pressureSum = 0.0f;
-            for (RawPattern rP : rawPatternsList)
+            for (RawPattern rP : rawPatternsTempList)
             {
                 if (rP.getNumberOfActivatedPoint().equals(Integer.toString(A)))
                 {
@@ -670,5 +686,61 @@ public class MainActivity extends AppCompatActivity
     private float getCenterYForRow(int row)
     {
         return mPatternLockView.getPaddingTop() + row * mPatternLockView.getHeight() + mPatternLockView.getHeight() / 2f;
+    }
+
+    public void writeCSVFiles()
+    {
+        for (List<String> r: finalRawPatternFile)
+        {
+            for(int i=0;i<r.size();i++)
+            {
+                Log.i("Infoooooo", r.get(i));
+            }
+            Log.i("Infoooooo"," \n");
+            Log.i("Infoooooo"," \n");
+        }
+//        for (String str : rawPatternsList)
+//        {
+//            Log.i("Infoooo", str);
+//        }
+
+        String rootPath = getFilesDir() + "/" + username.getText() + "/";
+        File root = new File(rootPath);
+        if (!root.exists())
+        {
+            root.mkdirs();
+        }
+        try
+        {
+            //For the Raw Patterns File
+            for (int i = 0; i < finalRawPatternFile.size(); i++)
+            {
+                FileWriter writer = null;
+
+                File csv = new File(rootPath + username.getText() + "_" + i + "_raw.csv");
+                writer = new FileWriter(csv);
+
+                String header = "number_of_activated_point;timestamp;xpoint;ypoint;pressure\n";
+                writer.write(header);
+                for (int j=0;j<finalRawPatternFile.get(i).size();j++)
+                {
+                    writer.write(finalRawPatternFile.get(i).get(j));
+                }
+                writer.close();
+            }
+//            for (List<String> r: finalRawPatternFile)
+//            {
+//                for(int i=0;i<r.size();i++)
+//                {
+//                    Log.i("Infoooooo", r.get(i));
+//                }
+//
+//            }
+
+        }
+        catch (IOException e)
+        {
+            Log.e("Error", e.toString());
+        }
     }
 }

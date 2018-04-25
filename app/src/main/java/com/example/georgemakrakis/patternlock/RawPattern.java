@@ -56,4 +56,16 @@ public class RawPattern
     {
         this.pressure = pressure;
     }
+
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder();
+        for (int i=0;i<coordinates.size();i++)
+        {
+            str.append(numberOfActivatedPoint).append(";").append(timeStamp).append(";").
+                    append(coordinates.get(i).x).append(";").append(coordinates.get(i).y).
+                    append(";").append(pressure.get(i)+"\n");
+        }
+        return str.toString();
+    }
 }

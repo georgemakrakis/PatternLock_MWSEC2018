@@ -56,4 +56,21 @@ public class SensorData
         this.laccelData = laccelData;
     }
 
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder();
+
+        //Losing some data here cause accelData list is bigger than laccelData and gyroData
+        for (int i=0;i<laccelData.size();i++)
+        {
+            str.append(timeStamp).append(";").
+                    append(accelData.get(i).x).append(";").append(accelData.get(i).y).append(";").
+                    append(accelData.get(i).z).append(";").append(gyroData.get(i).x).append(";").
+                    append(gyroData.get(i).y).append(";").append(gyroData.get(i).z).append(";").
+                    append(laccelData.get(i).x).append(";").append(laccelData.get(i).y).append(";").
+                    append(laccelData.get(i).z).append("\n");
+        }
+        return str.toString();
+    }
+
 }

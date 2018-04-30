@@ -385,6 +385,10 @@ public class MainActivity extends AppCompatActivity
         public void onCleared()
         {
             Log.d(getClass().getName(), "Pattern has been cleared");
+            if (patternsList1.size() == 13 && patternsList2.size() == 0)
+            {
+                ShowDialog("Continue with 10 more patterns");
+            }
             //When user reaches the 10 patterns input check if he remembers 3 of them
             if (patternsList1.size() == 10 || patternsList2.size() == 10)
             {
@@ -395,9 +399,11 @@ public class MainActivity extends AppCompatActivity
 
             if (patternsList1.size() + patternsList2.size() == 26)
             {
+                ShowDialog("You made it! Check your statistics!");
                 //TODO save data and move to the next page
                 finalRawPatternFile.add(rawPatternsList);
-                writeCSVFiles();
+                //writeRawPatternFile();
+                writeSensorDataFiles();
             }
 
             finalRawPatternFile.add((List<String>) rawPatternsList.clone());
@@ -688,22 +694,8 @@ public class MainActivity extends AppCompatActivity
         return mPatternLockView.getPaddingTop() + row * mPatternLockView.getHeight() + mPatternLockView.getHeight() / 2f;
     }
 
-    public void writeCSVFiles()
+    public void writeRawPatternFile()
     {
-        for (List<String> r: finalRawPatternFile)
-        {
-            for(int i=0;i<r.size();i++)
-            {
-                Log.i("Infoooooo", r.get(i));
-            }
-            Log.i("Infoooooo"," \n");
-            Log.i("Infoooooo"," \n");
-        }
-//        for (String str : rawPatternsList)
-//        {
-//            Log.i("Infoooo", str);
-//        }
-
         String rootPath = getFilesDir() + "/" + username.getText() + "/";
         File root = new File(rootPath);
         if (!root.exists())
@@ -722,7 +714,7 @@ public class MainActivity extends AppCompatActivity
 
                 String header = "number_of_activated_point;timestamp;xpoint;ypoint;pressure\n";
                 writer.write(header);
-                for (int j=0;j<finalRawPatternFile.get(i).size();j++)
+                for (int j = 0; j < finalRawPatternFile.get(i).size(); j++)
                 {
                     writer.write(finalRawPatternFile.get(i).get(j));
                 }
@@ -742,5 +734,64 @@ public class MainActivity extends AppCompatActivity
         {
             Log.e("Error", e.toString());
         }
+    }
+
+    public void writeSensorDataFiles()
+    {
+
+        String rootPath = getFilesDir() + "/" + username.getText() + "/";
+        File root = new File(rootPath);
+        if (!root.exists())
+        {
+            root.mkdirs();
+        }
+
+        try
+        {
+            for (int i = 0; i < sensorlList.size(); i++)
+            {
+                FileWriter writer = null;
+
+                File csv = new File(rootPath + username.getText() + "_" + i + "_sensors.csv");
+                writer = new FileWriter(csv);
+
+                String header = "timestamp;accel_x;accel_y;accel_z;gyro_x;gyro_y;gyro_z;laccel_x;laccel_y;laccel_z\n";
+                writer.write(header);
+
+                writer.write(sensorlList.get(i).toString());
+
+                writer.close();
+
+//                Log.d("Timestamp", sensorlList.get(i).getTimeStamp() + "");
+//                for (TripleData a : sensorlList.get(i).getAccelData())
+//                {
+//                    Log.d("Accel X", a.x + "");
+//                    Log.d("Accel Y", a.y + "");
+//                    Log.d("Accel Z", a.z + "");
+//                }
+//
+//                for (TripleData a : sensorlList.get(i).getGyroData())
+//                {
+//                    Log.d("Gyro X", a.x + "");
+//                    Log.d("Gyro Y", a.y + "");
+//                    Log.d("Gyro Z", a.z + "");
+//                }
+//
+//                for (TripleData a : sensorlList.get(i).getLaccelData())
+//                {
+//                    Log.d("Laccel X", a.x + "");
+//                    Log.d("Laccel Y", a.y + "");
+//                    Log.d("Laccel Z", a.z + "");
+//                }
+                //Log.d("Debuuuug",sensorlList.get(i).toString());
+            }
+
+        }
+        catch (Exception e)
+        {
+            Log.e("Error", e.toString());
+        }
+
+
     }
 }

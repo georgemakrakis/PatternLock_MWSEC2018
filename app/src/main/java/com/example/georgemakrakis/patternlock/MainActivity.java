@@ -830,7 +830,7 @@ public class MainActivity extends AppCompatActivity
 //                Log.d("Debugggg",patternMetadataList.get(i).toString());
 //            }
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             Log.e("Error", e.toString());
         }

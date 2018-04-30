@@ -36,108 +36,143 @@ public class PairMetadata
         this.avgPressure = avgPressure;
     }
 
-    public String getUsername() {
+    public String getUsername()
+    {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String username)
+    {
         this.username = username;
     }
 
-    public int getAttempt() {
+    public int getAttempt()
+    {
         return attempt;
     }
 
-    public void setAttempt(int attempt) {
+    public void setAttempt(int attempt)
+    {
         this.attempt = attempt;
     }
 
-    public String getResolution() {
+    public String getResolution()
+    {
         return resolution;
     }
 
-    public void setResolution(String resolution) {
+    public void setResolution(String resolution)
+    {
         this.resolution = resolution;
     }
 
-    public int getPatternNumberA() {
+    public int getPatternNumberA()
+    {
         return patternNumberA;
     }
 
-    public void setPatternNumberA(int patternNumberA) {
+    public void setPatternNumberA(int patternNumberA)
+    {
         this.patternNumberA = patternNumberA;
     }
 
-    public int getPatternNumberB() {
+    public int getPatternNumberB()
+    {
         return patternNumberB;
     }
 
-    public void setPatternNumberB(int patternNumberB) {
+    public void setPatternNumberB(int patternNumberB)
+    {
         this.patternNumberB = patternNumberB;
     }
 
-    public Tuple<Float> getCentralCoordsA() {
+    public Tuple<Float> getCentralCoordsA()
+    {
         return centralCoordsA;
     }
 
-    public void setCentralCoordsA(Tuple<Float> centralCoordsA) {
+    public void setCentralCoordsA(Tuple<Float> centralCoordsA)
+    {
         this.centralCoordsA = centralCoordsA;
     }
 
-    public Tuple<Float> getCentralCoordsB() {
+    public Tuple<Float> getCentralCoordsB()
+    {
         return centralCoordsB;
     }
 
-    public void setCentralCoordsB(Tuple<Float> centralCoordsB) {
+    public void setCentralCoordsB(Tuple<Float> centralCoordsB)
+    {
         this.centralCoordsB = centralCoordsB;
     }
 
-    public Tuple<Float> getFirstCoordsA() {
+    public Tuple<Float> getFirstCoordsA()
+    {
         return firstCoordsA;
     }
 
-    public void setFirstCoordsA(Tuple<Float> firstCoordsA) {
+    public void setFirstCoordsA(Tuple<Float> firstCoordsA)
+    {
         this.firstCoordsA = firstCoordsA;
     }
 
-    public Tuple<Float> getLastCoordsB() {
+    public Tuple<Float> getLastCoordsB()
+    {
         return lastCoordsB;
     }
 
-    public void setLastCoordsB(Tuple<Float> lastCoordsB) {
+    public void setLastCoordsB(Tuple<Float> lastCoordsB)
+    {
         this.lastCoordsB = lastCoordsB;
     }
 
-    public double getDistanceAB() {
+    public double getDistanceAB()
+    {
         return distanceAB;
     }
 
-    public void setDistanceAB(double distanceAB) {
+    public void setDistanceAB(double distanceAB)
+    {
         this.distanceAB = distanceAB;
     }
 
-    public long getIntertimeAB() {
+    public long getIntertimeAB()
+    {
         return intertimeAB;
     }
 
-    public void setIntertimeAB(long intertimeAB) {
+    public void setIntertimeAB(long intertimeAB)
+    {
         this.intertimeAB = intertimeAB;
     }
 
-    public double getAvgSpeedAB() {
+    public double getAvgSpeedAB()
+    {
         return avgSpeedAB;
     }
 
-    public void setAvgSpeedAB(double avgSpeedAB) {
+    public void setAvgSpeedAB(double avgSpeedAB)
+    {
         this.avgSpeedAB = avgSpeedAB;
     }
 
-    public float getAvgPressure() {
+    public float getAvgPressure()
+    {
         return avgPressure;
     }
 
-    public void setAvgPressure(float avgPressure) {
+    public void setAvgPressure(float avgPressure)
+    {
         this.avgPressure = avgPressure;
     }
 
+    @Override
+    public String toString()
+    {
+        return username + ";" + attempt + ";" + resolution + ";" + patternNumberA + ";" +
+                patternNumberB + ";" + centralCoordsA.x + ";" + centralCoordsA.y + ";" +
+                centralCoordsB.x + ";" + centralCoordsB.y + ";" + firstCoordsA.x+ ";" +
+                firstCoordsA.y+ ";" + lastCoordsB.x + ";" +lastCoordsB.y + ";" + distanceAB + ";" +
+                intertimeAB + ";" + avgSpeedAB + ";" + avgPressure + "\n";
+    }
 }

@@ -404,7 +404,8 @@ public class MainActivity extends AppCompatActivity
                 finalRawPatternFile.add(rawPatternsList);
                 //writeRawPatternFile();
                 //writeSensorDataFiles();
-                writeMetadataFile();
+                //writeMetadataFile();
+                writePairMetadataFile();
             }
 
             finalRawPatternFile.add((List<String>) rawPatternsList.clone());
@@ -818,7 +819,7 @@ public class MainActivity extends AppCompatActivity
                     "FingerNum\n";
             writer.write(header);
 
-            for(int i=0;i<patternMetadataList.size();i++)
+            for (int i = 0; i < patternMetadataList.size(); i++)
             {
                 writer.write(patternMetadataList.get(i).toString());
             }
@@ -831,6 +832,65 @@ public class MainActivity extends AppCompatActivity
 //            }
         }
         catch (IOException e)
+        {
+            Log.e("Error", e.toString());
+        }
+    }
+
+    public void writePairMetadataFile()
+    {
+        String rootPath = getFilesDir() + "/" + username.getText() + "/";
+        File root = new File(rootPath);
+        if (!root.exists())
+        {
+            root.mkdirs();
+        }
+
+        try
+        {
+
+
+            String[] finalArray = new String[26];
+            for (int i = 0; i < finalArray.length; i++)
+            {
+                finalArray[i] = "";
+            }
+            for (int i = 0; i < pairMetadataList.size(); i++)
+            {
+                if (pairMetadataList.get(i).getAttempt() == 26)
+                {
+                    finalArray[25] += pairMetadataList.get(i).toString();
+                }
+
+                else
+                {
+                    finalArray[pairMetadataList.get(i).getAttempt() - 1] += pairMetadataList.get(i).toString();
+                }
+            }
+            for (int i = 0; i < finalArray.length; i++)
+            {
+//                Log.d("Debuuugggg", finalArray[i] + "");
+//                Log.d("Debuuugggg", "\n");
+//                Log.d("Debuuugggg", "\n");
+                FileWriter writer = null;
+
+                File csv = new File(rootPath + username.getText() + "_" + i + "_pairs.csv");
+                writer = new FileWriter(csv);
+
+                String header = "Username;Attempt_number;Screen_resolution;Pattern_number_A;" +
+                        "Pattern_number_B;Xcoord_of_central_Point_of_A;Ycoord_of_central_Point_of_A;" +
+                        "Xcoord_of_central_Point_of_B;Ycoord_of_central_Point_of_B;First_Xcoord_of_A;" +
+                        "First_Ycoord_of_A;Last_ Xcoord_of_B;Last_Ycoord_of_B;Distance_AB;Intertime_AB;" +
+                        "Avg_speeadAB;Avg_pressure\n";
+                writer.write(header);
+
+                writer.write(finalArray[i] + "");
+
+                writer.close();
+            }
+
+        }
+        catch (Exception e)
         {
             Log.e("Error", e.toString());
         }

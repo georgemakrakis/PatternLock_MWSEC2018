@@ -403,7 +403,8 @@ public class MainActivity extends AppCompatActivity
                 //TODO save data and move to the next page
                 finalRawPatternFile.add(rawPatternsList);
                 //writeRawPatternFile();
-                writeSensorDataFiles();
+                //writeSensorDataFiles();
+                writeMetadataFile();
             }
 
             finalRawPatternFile.add((List<String>) rawPatternsList.clone());
@@ -787,11 +788,51 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             Log.e("Error", e.toString());
         }
 
 
+    }
+
+    public void writeMetadataFile()
+    {
+        String rootPath = getFilesDir() + "/" + username.getText() + "/";
+        File root = new File(rootPath);
+        if (!root.exists())
+        {
+            root.mkdirs();
+        }
+
+        try
+        {
+
+            FileWriter writer = null;
+
+            File csv = new File(rootPath + username.getText() + "_metadata.csv");
+            writer = new FileWriter(csv);
+
+            String header = "Username;Attempt_number;Sequence;Seq_length;Time_to_complete;" +
+                    "PatternLength;Avg_speed;Avg_pressure;Highest_pressure;Lowest_pressure;HandNum;" +
+                    "FingerNum\n";
+            writer.write(header);
+
+            for(int i=0;i<patternMetadataList.size();i++)
+            {
+                writer.write(patternMetadataList.get(i).toString());
+            }
+
+            writer.close();
+
+//            for(int i=0;i<patternMetadataList.size();i++)
+//            {
+//                Log.d("Debugggg",patternMetadataList.get(i).toString());
+//            }
+        }
+        catch (Exception e)
+        {
+            Log.e("Error", e.toString());
+        }
     }
 }

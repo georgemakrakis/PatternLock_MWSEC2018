@@ -33,100 +33,131 @@ public class PatternMetadata
         this.fingerNum = fingerNum;
     }
 
-    public String getUsername() {
+    public String getUsername()
+    {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String username)
+    {
         this.username = username;
     }
 
-    public int getAttempt() {
+    public int getAttempt()
+    {
         return attempt;
     }
 
-    public void setAttempt(int attempt) {
+    public void setAttempt(int attempt)
+    {
         this.attempt = attempt;
     }
 
-    public String getSequence() {
+    public String getSequence()
+    {
         return sequence;
     }
 
-    public void setSequence(String sequence) {
+    public void setSequence(String sequence)
+    {
         this.sequence = sequence;
     }
 
-    public int getSequenceLength() {
+    public int getSequenceLength()
+    {
         return sequenceLength;
     }
 
-    public void setSequenceLength(int sequenceLength) {
+    public void setSequenceLength(int sequenceLength)
+    {
         this.sequenceLength = sequenceLength;
     }
 
-    public long getTimeToComplete() {
+    public long getTimeToComplete()
+    {
         return timeToComplete;
     }
 
-    public void setTimeToComplete(long timeToComplete) {
+    public void setTimeToComplete(long timeToComplete)
+    {
         this.timeToComplete = timeToComplete;
     }
 
-    public double getPatternLength() {
+    public double getPatternLength()
+    {
         return patternLength;
     }
 
-    public void setPatternLength(double patternLength) {
+    public void setPatternLength(double patternLength)
+    {
         this.patternLength = patternLength;
     }
 
-    public double getAvgSpeed() {
+    public double getAvgSpeed()
+    {
         return avgSpeed;
     }
 
-    public void setAvgSpeed(double avgSpeed) {
+    public void setAvgSpeed(double avgSpeed)
+    {
         this.avgSpeed = avgSpeed;
     }
 
-    public float getAvgPressure() {
+    public float getAvgPressure()
+    {
         return avgPressure;
     }
 
-    public void setAvgPressure(float avgPressure) {
+    public void setAvgPressure(float avgPressure)
+    {
         this.avgPressure = avgPressure;
     }
 
-    public float getHighestPressure() {
+    public float getHighestPressure()
+    {
         return highestPressure;
     }
 
-    public void setHighestPressure(float highestPressure) {
+    public void setHighestPressure(float highestPressure)
+    {
         this.highestPressure = highestPressure;
     }
 
-    public float getLowestPressure() {
+    public float getLowestPressure()
+    {
         return lowestPressure;
     }
 
-    public void setLowestPressure(float lowestPressure) {
+    public void setLowestPressure(float lowestPressure)
+    {
         this.lowestPressure = lowestPressure;
     }
 
-    public int getHandNum() {
+    public int getHandNum()
+    {
         return handNum;
     }
 
-    public void setHandNum(int handNum) {
+    public void setHandNum(int handNum)
+    {
         this.handNum = handNum;
     }
 
-    public int getFingerNum() {
+    public int getFingerNum()
+    {
         return fingerNum;
     }
 
-    public void setFingerNum(int fingerNum) {
+    public void setFingerNum(int fingerNum)
+    {
         this.fingerNum = fingerNum;
     }
 
+    @Override
+    public String toString()
+    {
+        return username + ";" + attempt + ";" + sequence + ";" + sequenceLength + ";" + timeToComplete +
+                ";" + patternLength + ";" + avgSpeed + ";" + avgPressure + ";" + highestPressure + ";" +
+                lowestPressure + ";" + handNum + ";" + fingerNum + "\n";
+    }
 }

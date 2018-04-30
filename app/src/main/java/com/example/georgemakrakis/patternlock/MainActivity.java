@@ -872,6 +872,7 @@ public class MainActivity extends AppCompatActivity
 //                Log.d("Debuuugggg", finalArray[i] + "");
 //                Log.d("Debuuugggg", "\n");
 //                Log.d("Debuuugggg", "\n");
+
                 FileWriter writer = null;
 
                 File csv = new File(rootPath + username.getText() + "_" + i + "_pairs.csv");

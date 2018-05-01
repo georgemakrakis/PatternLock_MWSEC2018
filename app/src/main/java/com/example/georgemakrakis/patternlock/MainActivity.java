@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -27,7 +28,6 @@ import android.widget.TextView;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
-import com.opencsv.CSVWriter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -400,12 +400,18 @@ public class MainActivity extends AppCompatActivity
             if (patternsList1.size() + patternsList2.size() == 26)
             {
                 ShowDialog("You made it! Check your statistics!");
-                //TODO save data and move to the next page
+
                 finalRawPatternFile.add(rawPatternsList);
                 //writeRawPatternFile();
                 //writeSensorDataFiles();
                 //writeMetadataFile();
-                writePairMetadataFile();
+                //writePairMetadataFile();
+
+                Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
+                intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
+                intent.putStringArrayListExtra("patternsList2",(ArrayList<String>) patternsList2);
+                startActivity(intent);
+
             }
 
             finalRawPatternFile.add((List<String>) rawPatternsList.clone());

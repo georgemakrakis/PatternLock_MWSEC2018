@@ -4,8 +4,11 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity
@@ -25,6 +28,7 @@ public class StatisticsActivity extends AppCompatActivity
         TextView shortEdges = (TextView) findViewById(R.id.shortEdges);
         TextView longOrthEdges = (TextView) findViewById(R.id.longOrthEdges);
         TextView shortOrthEdges = (TextView) findViewById(R.id.shortOrthEdges);
+        ListView NumFreqListView = (ListView) findViewById(R.id.NumFreqListView);
 
         List<String> patternsList1 = getIntent().getStringArrayListExtra("patternsList1");
         List<String> patternsList2 = getIntent().getStringArrayListExtra("patternsList2");
@@ -87,6 +91,16 @@ public class StatisticsActivity extends AppCompatActivity
                 getStatData(patternsList1, patternsList2, allLongOrthEdges));
         shortOrthEdges.setText("Short orthogonal edges in your patterns: " +
                 getStatData(patternsList1, patternsList2, allShortOrthEdges));
+
+
+        int[] numberFreq = getNumberFreq(patternsList1,patternsList2);
+        List<String> freqList = new ArrayList<>();
+        for (int i = 0; i < numberFreq.length; ++i)
+        {
+            freqList.add("Usage of number: "+i+" --> "+Integer.toString(numberFreq[i]));
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,  R.layout.spinner_item, freqList);
+        NumFreqListView.setAdapter(adapter);
 
     }
 

@@ -1,5 +1,6 @@
 package com.example.georgemakrakis.patternlock;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,111 +10,116 @@ import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity
 {
-    private TextView longRuns;
-    private TextView closedCurves;
-    private TextView longCurves;
-    private TextView longEdges;
-    private TextView shortEdges;
-    private TextView longOrthEdges;
-    private TextView shortOrthEdges;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        longRuns = (TextView) findViewById(R.id.pattern_counter_text);
-        closedCurves = (TextView) findViewById(R.id.pattern_counter_text);
-        longCurves = (TextView) findViewById(R.id.pattern_counter_text);
-        longEdges = (TextView) findViewById(R.id.pattern_counter_text);
-        shortEdges = (TextView) findViewById(R.id.pattern_counter_text);
-        longOrthEdges = (TextView) findViewById(R.id.pattern_counter_text);
-        shortOrthEdges = (TextView) findViewById(R.id.pattern_counter_text);
+        TextView longRuns = (TextView) findViewById(R.id.longRuns);
+        TextView closedCurves = (TextView) findViewById(R.id.closedCurves);
+        TextView longCurves = (TextView) findViewById(R.id.longCurves);
+        TextView longEdges = (TextView) findViewById(R.id.longEdges);
+        TextView shortEdges = (TextView) findViewById(R.id.shortEdges);
+        TextView longOrthEdges = (TextView) findViewById(R.id.longOrthEdges);
+        TextView shortOrthEdges = (TextView) findViewById(R.id.shortOrthEdges);
 
         List<String> patternsList1 = getIntent().getStringArrayListExtra("patternsList1");
         List<String> patternsList2 = getIntent().getStringArrayListExtra("patternsList2");
 
         //Log.d("Debug",getLongRuns(patternsList1, patternsList2)+"");
 
-        longRuns.setText("Long runs in your patterns: ");
-        closedCurves.setText("Closed curves in your patterns: ");
-        longCurves.setText("Long curves in your patterns: ");
-        longEdges.setText("Longs edges in your patterns: ");
-        shortEdges.setText("Short edges in your patterns: ");
-        longOrthEdges.setText("Long orthogonal edges in your patterns: ");
-        shortOrthEdges.setText("Long orthogonal edges in your patterns: ");
 
-    }
-
-    public int getLongRuns(List<String> patternsList1, List<String> patternsList2)
-    {
-        int longRunsCounter = 0;
+        //Our probable values of every desired pattern "schema" we want
         String[] allLongRuns = {
                 "036", "630", "147", "741", "258", "852",
                 "012", "210", "345", "543", "678", "876",
                 "048", "840", "246", "642"
         };
-
-        for (String pattern : patternsList1)
-        {
-            for (String longRun : allLongRuns)
-            {
-                if (pattern.contains(longRun))
-                {
-                    longRunsCounter++;
-                }
-            }
-        }
-
-        for (String pattern : patternsList2)
-        {
-            for (String longRun : allLongRuns)
-            {
-                if (pattern.contains(longRun))
-                {
-                    longRunsCounter++;
-                }
-            }
-        }
-
-        return longRunsCounter;
-
-    }
-
-    public int getClosedRuns(List<String> patternsList1, List<String> patternsList2)
-    {
-        int closedCurvesCounter = 0;
         String[] allClosedCurves = {
-                "0341", "1430", "3674", "4763", "1452", "2541",
-                "4785", "5874", "1034", "4301", "4367", "7634",
-                "1254", "4521", "4785", "5874"
+                "0341", "1452", "3674", "4785", "1034", "4367", "2145", "5478", "3014", "4125",
+                "0347", "7458", "3410", "4521", "6743", "7854", "4587", "3476", "1254", "0143",
+                "8547", "7430", "5214", "4103", "8745", "5412", "7634", "4301", "5874", "4763",
+                "2541", "1430",
         };
 
+        String[] allLongCurves = {
+                "0341", "1452", "3674", "4785", "1034", "4367", "2145", "5478", "3014", "4125",
+                "0347", "7458", "3410", "4521", "6743", "7854", "4587", "3476", "1254", "0143",
+                "8547", "7430", "5214", "4103", "8745", "5412", "7634", "4301", "5874", "4763",
+                "2541", "1430",
+        };
+
+        String[] allLongEdges = {
+                "63048", "64258", "64210", "04876", "67840", "01246", "85246", "84036",
+        };
+
+        String[] allShortEdges = {
+                "314", "425", "647", "758", "403", "514", "847", "736", "043", "154", "376", "487",
+                "310", "421", "643", "754", "457", "346", "124", "013", "784", "673", "451", "340",
+                "637", "748", "415", "304", "857", "746", "524", "413",
+        };
+
+        String[] allLongOrthEdges = {
+                "03678", "01258", "25878", "21036", "63012", "87852", "85210", "87630",
+        };
+
+        String[] allShortOrthEdges = {
+                "034", "145", "367", "478", "143", "254", "476", "587", "301", "412", "634", "754",
+                "410", "521", "743", "854", "458", "347", "125", "014", "457", "436", "214", "103",
+                "785", "674", "452", "341", "874", "763", "541", "430",
+        };
+
+
+        longRuns.setText("Long runs in your patterns: " +
+                getStatData(patternsList1, patternsList2, allLongRuns));
+        closedCurves.setText("Closed curves in your patterns: " +
+                getStatData(patternsList1, patternsList2, allClosedCurves));
+        longCurves.setText("Long curves in your patterns: " +
+                getStatData(patternsList1, patternsList2, allLongCurves));
+        longEdges.setText("Longs edges in your patterns: " +
+                getStatData(patternsList1, patternsList2, allLongEdges));
+        shortEdges.setText("Short edges in your patterns: " +
+                getStatData(patternsList1, patternsList2, allShortEdges));
+        longOrthEdges.setText("Long orthogonal edges in your patterns: " +
+                getStatData(patternsList1, patternsList2, allLongOrthEdges));
+        shortOrthEdges.setText("Short orthogonal edges in your patterns: " +
+                getStatData(patternsList1, patternsList2, allShortOrthEdges));
+
+    }
+
+    public int getStatData(List<String> patternsList1, List<String> patternsList2, String[] data)
+    {
+        int counter = 0;
+
         for (String pattern : patternsList1)
         {
-            for (String longRun : allClosedCurves)
+            for (String longRun : data)
             {
                 if (pattern.contains(longRun))
                 {
-                    closedCurvesCounter++;
+                    counter++;
                 }
             }
         }
 
         for (String pattern : patternsList2)
         {
-            for (String longRun : allClosedCurves)
+            for (String longRun : data)
             {
                 if (pattern.contains(longRun))
                 {
-                    closedCurvesCounter++;
+                    counter++;
                 }
             }
         }
 
-        return closedCurvesCounter;
+        return counter;
+
     }
+
 
     public int[] getNumberFreq(List<String> patternsList1, List<String> patternsList2)
     {
@@ -125,7 +131,7 @@ public class StatisticsActivity extends AppCompatActivity
 
         for (String pattern : patternsList1)
         {
-            for(int i=0;i<pattern.length();i++)
+            for (int i = 0; i < pattern.length(); i++)
             {
                 numberFreq[Character.getNumericValue(pattern.charAt(i))]++;
             }
@@ -133,12 +139,12 @@ public class StatisticsActivity extends AppCompatActivity
 
         for (String pattern : patternsList2)
         {
-            for(int i=0;i<pattern.length();i++)
+            for (int i = 0; i < pattern.length(); i++)
             {
                 numberFreq[Character.getNumericValue(pattern.charAt(i))]++;
             }
         }
 
-        return  numberFreq;
+        return numberFreq;
     }
 }

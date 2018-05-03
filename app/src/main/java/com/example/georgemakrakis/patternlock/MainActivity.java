@@ -148,11 +148,20 @@ public class MainActivity extends AppCompatActivity
             {
                 if (start_stop_button.getText().equals("Start"))
                 {
-                    start_stop_button.setText("Stop");
-                    mPatternLockView.setInputEnabled(true);
-                    spinnerFinger.setEnabled(false);
-                    spinnerHand.setEnabled(false);
-                    addTouchListener();
+//                    start_stop_button.setText("Stop");
+//                    mPatternLockView.setInputEnabled(true);
+//                    spinnerFinger.setEnabled(false);
+//                    spinnerHand.setEnabled(false);
+//                    addTouchListener();
+
+                    patternsList1 = PatternsTest();
+                    patternsList2 = PatternsTest();
+
+
+                    Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
+                    intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
+                    intent.putStringArrayListExtra("patternsList2",(ArrayList<String>) patternsList2);
+                    startActivity(intent);
                 }
                 else
                 {
@@ -901,5 +910,35 @@ public class MainActivity extends AppCompatActivity
         {
             Log.e("Error", e.toString());
         }
+    }
+
+    public List<String> PatternsTest()
+    {
+        List<String> patternTestList = new ArrayList<>();
+        for(int i=0;i<13;i++)
+        {
+            Random r = new Random();
+            int count = r.nextInt((9 - 4) + 1) + 4;
+
+            StringBuilder patternTest = new StringBuilder();
+            for(int j=0;j<count;j++)
+            {
+                Random r2 = new Random();
+                int randomNum = r.nextInt((8) + 1);
+
+                patternTest.append(Integer.toString(randomNum));
+            }
+
+            patternTestList.add(patternTest.toString());
+        }
+
+        return patternTestList;
+
+
+//        for(String str : patternTestList)
+//        {
+//            System.out.println(str);
+//        }
+
     }
 }

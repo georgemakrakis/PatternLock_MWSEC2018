@@ -95,9 +95,9 @@ public class StatisticsActivity extends AppCompatActivity
 
         int[] numberFreq = getNumberFreq(patternsList1,patternsList2);
         List<String> freqList = new ArrayList<>();
-        for (int i = 0; i < numberFreq.length; ++i)
+        for (int i = 0; i < numberFreq.length-1; i++)
         {
-            freqList.add("Usage of number: "+i+" --> "+Integer.toString(numberFreq[i]));
+            freqList.add(i+" --> "+Integer.toString(numberFreq[i])+" times");
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,  R.layout.spinner_item, freqList);
         NumFreqListView.setAdapter(adapter);

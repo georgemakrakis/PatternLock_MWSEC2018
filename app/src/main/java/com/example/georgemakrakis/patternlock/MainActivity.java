@@ -148,21 +148,21 @@ public class MainActivity extends AppCompatActivity
             {
                 if (start_stop_button.getText().equals("Start"))
                 {
-//                    start_stop_button.setText("Stop");
-//                    mPatternLockView.setInputEnabled(true);
-//                    spinnerFinger.setEnabled(false);
-//                    spinnerHand.setEnabled(false);
-//                    addTouchListener();
+                    start_stop_button.setText("Stop");
+                    mPatternLockView.setInputEnabled(true);
+                    spinnerFinger.setEnabled(false);
+                    spinnerHand.setEnabled(false);
+                    addTouchListener();
 
                     /*-----------------*/
                     //TESTING AREA
-                    patternsList1 = PatternsTest();
-                    patternsList2 = PatternsTest();
-
-                    Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
-                    intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
-                    intent.putStringArrayListExtra("patternsList2",(ArrayList<String>) patternsList2);
-                    startActivity(intent);
+//                    patternsList1 = PatternsTest();
+//                    patternsList2 = PatternsTest();
+//
+//                    Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
+//                    intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
+//                    intent.putStringArrayListExtra("patternsList2",(ArrayList<String>) patternsList2);
+//                    startActivity(intent);
                     /*-----------------*/
 
                 }
@@ -457,34 +457,45 @@ public class MainActivity extends AppCompatActivity
 
             if (flagAtThree && renterCounter < 3)
             {
-                if (patternsList.contains(patternNow))
+                if(patternNow.equals(patternsList.get(patternsList.size()-1)) ||
+                        patternNow.equals(patternsList.get(patternsList.size()-2)) ||
+                        patternNow.equals(patternsList.get(patternsList.size()-3)))
                 {
-                    patternsList.add(patternNow);
-                    renterCounter++;
-                    Log.d(getClass().getName(), "Patterns to list 1: " + patternsList1.toString());
-                    Log.d(getClass().getName(), "Patterns to list 2: " + patternsList2.toString());
+                    ShowDialog("You have entered the same pattern twice, please enter a different pattern");
 
-                    return true;
+                    return false;
                 }
                 else
                 {
-                    //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
-                    ShowDialog("The pattern you entered is not one of the previous patterns. Now you have to re-enter another 10 patterns");
-                    flagAtThree = false;
-                    patternsList.clear();
-                    coordinatesList.clear();
-                    pressureList.clear();
-                    rawPatternsTempList.clear();
-                    accelList.clear();
-                    gyroList.clear();
-                    laccelList.clear();
-                    sensorlList.clear();
-                    patternMetadataList.clear();
-                    pairMetadataList.clear();
+                    if (patternsList.contains(patternNow))
+                    {
+                        patternsList.add(patternNow);
+                        renterCounter++;
+                        Log.d(getClass().getName(), "Patterns to list 1: " + patternsList1.toString());
+                        Log.d(getClass().getName(), "Patterns to list 2: " + patternsList2.toString());
 
-                    rawPatternsList.clear();
+                        return true;
+                    }
+                    else
+                    {
+                        //Log.d(getClass().getName(), "You have entered the same pattern twice, please enter a different pattern");
+                        ShowDialog("The pattern you entered is not one of the previous patterns. Now you have to re-enter another 10 patterns");
+                        flagAtThree = false;
+                        patternsList.clear();
+                        coordinatesList.clear();
+                        pressureList.clear();
+                        rawPatternsTempList.clear();
+                        accelList.clear();
+                        gyroList.clear();
+                        laccelList.clear();
+                        sensorlList.clear();
+                        patternMetadataList.clear();
+                        pairMetadataList.clear();
 
-                    return false;
+                        rawPatternsList.clear();
+
+                        return false;
+                    }
                 }
             }
             else

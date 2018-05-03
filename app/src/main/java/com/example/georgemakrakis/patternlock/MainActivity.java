@@ -411,13 +411,14 @@ public class MainActivity extends AppCompatActivity
 
             if (patternsList1.size() + patternsList2.size() == 26)
             {
-                ShowDialog("You made it! Check your statistics!");
+                //ShowDialog("You made it! Check your statistics!");
 
                 finalRawPatternFile.add(rawPatternsList);
                 //writeRawPatternFile();
                 //writeSensorDataFiles();
                 //writeMetadataFile();
                 //writePairMetadataFile();
+
 
                 Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
                 intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
@@ -440,7 +441,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     public void onClick(DialogInterface dialog, int id)
                     {
-                        // do nothing
+
                     }
                 });
         AlertDialog alertDialog = builder.create();

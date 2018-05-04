@@ -1,10 +1,12 @@
 package com.example.georgemakrakis.patternlock;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,8 +30,9 @@ public class StatisticsActivity extends AppCompatActivity
         TextView shortEdges = (TextView) findViewById(R.id.shortEdges);
         TextView longOrthEdges = (TextView) findViewById(R.id.longOrthEdges);
         TextView shortOrthEdges = (TextView) findViewById(R.id.shortOrthEdges);
-        ListView NumFreqListView = (ListView) findViewById(R.id.NumFreqListView);
+        LinearLayout NumFreqList = (LinearLayout) findViewById(R.id.NumFreqList);
         TextView scoreTextView = (TextView) findViewById(R.id.scoreTextView);
+        LinearLayout patternScoreList = (LinearLayout) findViewById(R.id.patternScoreList);
 
         List<String> patternsList1 = getIntent().getStringArrayListExtra("patternsList1");
         List<String> patternsList2 = getIntent().getStringArrayListExtra("patternsList2");
@@ -95,17 +98,40 @@ public class StatisticsActivity extends AppCompatActivity
         longOrthEdges.setText("Long orthogonal edges in your patterns: " + longOrthEdgesNum);
         shortOrthEdges.setText("Short orthogonal edges in your patterns: " + shortOrthEdgesNum);
 
-        //Populating the listview
+        //Populating the number frequency listview
         int[] numberFreq = getNumberFreq(patternsList1, patternsList2);
-        List<String> freqList = new ArrayList<>();
         for (int i = 0; i < numberFreq.length - 1; i++)
         {
-            freqList.add(i + " --> " + Integer.toString(numberFreq[i]) + " times");
+            TextView text = new TextView(this);
+            text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            text.setText(i + " --> " + Integer.toString(numberFreq[i]) + " times");
+            text.setTextColor(Color.parseColor("#ffffff"));
+            NumFreqList.addView(text);
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, freqList);
-        NumFreqListView.setAdapter(adapter);
 
-        scoreTextView.setText("Your overall score is: "+getScore(patternsList1,patternsList2,
+        int[] scores1 = getPatternScore(patternsList1,allLongRuns, allClosedCurves,allLongCurves,
+                allLongEdges, allShortEdges, allLongOrthEdges, allShortOrthEdges);
+        int[] scores2 = getPatternScore(patternsList2,allLongRuns, allClosedCurves,allLongCurves,
+                allLongEdges, allShortEdges, allLongOrthEdges, allShortOrthEdges);
+
+        for (int i = 0; i < scores1.length - 1; i++)
+        {
+            TextView text = new TextView(this);
+            text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            text.setText(patternsList1.get(i)+"-->"+scores1[i]);
+            text.setTextColor(Color.parseColor("#ffffff"));
+            patternScoreList.addView(text);
+        }
+        for (int i = 0; i < scores2.length - 1; i++)
+        {
+            TextView text = new TextView(this);
+            text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            text.setText(patternsList2.get(i)+"-->"+scores2[i]);
+            text.setTextColor(Color.parseColor("#ffffff"));
+            patternScoreList.addView(text);
+        }
+
+        scoreTextView.setText("Your overall score is: "+getOverallScore(patternsList1,patternsList2,
                 longRunsNum,closedCurvesNum,longCurvesNum,longEdgesNum,shortEdgesNum,
                 shortOrthEdgesNum,longOrthEdgesNum));
     }
@@ -168,7 +194,7 @@ public class StatisticsActivity extends AppCompatActivity
         return numberFreq;
     }
 
-    public int getScore(List<String> patternsList1, List<String> patternsList2, int longRunsNum,
+    public int getOverallScore(List<String> patternsList1, List<String> patternsList2, int longRunsNum,
                         int closedCurvesNum, int longCurvesNum, int longEdgesNum, int shortEdgesNum,
                         int shortOrthEdgesNum, int longOrthEdgesNum)
     {
@@ -187,6 +213,75 @@ public class StatisticsActivity extends AppCompatActivity
         points += shortOrthEdgesNum + shortEdgesNum + closedCurvesNum;
         //And all others get +2 points
         points += (longRunsNum+longCurvesNum+longEdgesNum+longOrthEdgesNum)*2;
+
+        return points;
+    }
+
+    public int [] getPatternScore(List<String> patternsList,  String[] allLongRuns,
+                                  String [] allClosedCurves,String[] allLongCurves,
+                                  String[] allLongEdges,  String[] allShortEdges,
+                                  String[] allLongOrthEdges,String[] allShortOrthEdges)
+    {
+        int points[] = new int[13];
+        for (int i = 0; i < points.length; i++)
+        {
+            points[i] = 0;
+        }
+
+        for (int i=0;i<patternsList.size();i++)
+        {
+            points[i]+=patternsList.get(i).length()-4;
+            for (String el : allLongRuns)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=2;
+                }
+            }
+            for (String el : allClosedCurves)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=2;
+                }
+            }
+            for (String el : allLongCurves)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=3;
+                }
+            }
+            for (String el : allLongEdges)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=3;
+                }
+            }
+            for (String el : allShortEdges)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=2;
+                }
+            }
+            for (String el : allLongOrthEdges)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=3;
+                }
+            }
+            for (String el : allShortOrthEdges)
+            {
+                if (patternsList.get(i).contains(el))
+                {
+                    points[i]+=2;
+                }
+            }
+
+        }
 
         return points;
     }

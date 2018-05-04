@@ -156,13 +156,13 @@ public class MainActivity extends AppCompatActivity
 
                     /*-----------------*/
                     //TESTING AREA
-//                    patternsList1 = PatternsTest();
-//                    patternsList2 = PatternsTest();
-//
-//                    Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
-//                    intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
-//                    intent.putStringArrayListExtra("patternsList2",(ArrayList<String>) patternsList2);
-//                    startActivity(intent);
+                    patternsList1 = PatternsTest();
+                    patternsList2 = PatternsTest();
+
+                    Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
+                    intent.putStringArrayListExtra("patternsList1",(ArrayList<String>) patternsList1);
+                    intent.putStringArrayListExtra("patternsList2",(ArrayList<String>) patternsList2);
+                    startActivity(intent);
                     /*-----------------*/
 
                 }

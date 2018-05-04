@@ -29,6 +29,7 @@ public class StatisticsActivity extends AppCompatActivity
         TextView longOrthEdges = (TextView) findViewById(R.id.longOrthEdges);
         TextView shortOrthEdges = (TextView) findViewById(R.id.shortOrthEdges);
         ListView NumFreqListView = (ListView) findViewById(R.id.NumFreqListView);
+        TextView scoreTextView = (TextView) findViewById(R.id.scoreTextView);
 
         List<String> patternsList1 = getIntent().getStringArrayListExtra("patternsList1");
         List<String> patternsList2 = getIntent().getStringArrayListExtra("patternsList2");
@@ -78,31 +79,35 @@ public class StatisticsActivity extends AppCompatActivity
         };
 
 
-        longRuns.setText("Long runs in your patterns: " +
-                getStatData(patternsList1, patternsList2, allLongRuns));
-        closedCurves.setText("Closed curves in your patterns: " +
-                getStatData(patternsList1, patternsList2, allClosedCurves));
-        longCurves.setText("Long curves in your patterns: " +
-                getStatData(patternsList1, patternsList2, allLongCurves));
-        longEdges.setText("Longs edges in your patterns: " +
-                getStatData(patternsList1, patternsList2, allLongEdges));
-        shortEdges.setText("Short edges in your patterns: " +
-                getStatData(patternsList1, patternsList2, allShortEdges));
-        longOrthEdges.setText("Long orthogonal edges in your patterns: " +
-                getStatData(patternsList1, patternsList2, allLongOrthEdges));
-        shortOrthEdges.setText("Short orthogonal edges in your patterns: " +
-                getStatData(patternsList1, patternsList2, allShortOrthEdges));
+        int longRunsNum = getStatData(patternsList1, patternsList2, allLongRuns);
+        int closedCurvesNum = getStatData(patternsList1, patternsList2, allClosedCurves);
+        int longCurvesNum = getStatData(patternsList1, patternsList2, allLongCurves);
+        int longEdgesNum = getStatData(patternsList1, patternsList2, allLongEdges);
+        int shortEdgesNum = getStatData(patternsList1, patternsList2, allShortEdges);
+        int shortOrthEdgesNum = getStatData(patternsList1, patternsList2, allShortOrthEdges);
+        int longOrthEdgesNum = getStatData(patternsList1, patternsList2, allLongOrthEdges);
 
+        longRuns.setText("Long runs in your patterns: " + longRunsNum);
+        closedCurves.setText("Closed curves in your patterns: " + closedCurvesNum);
+        longCurves.setText("Long curves in your patterns: " + longCurvesNum);
+        longEdges.setText("Longs edges in your patterns: " + longEdgesNum);
+        shortEdges.setText("Short edges in your patterns: " + shortEdgesNum);
+        longOrthEdges.setText("Long orthogonal edges in your patterns: " + longOrthEdgesNum);
+        shortOrthEdges.setText("Short orthogonal edges in your patterns: " + shortOrthEdgesNum);
 
-        int[] numberFreq = getNumberFreq(patternsList1,patternsList2);
+        //Populating the listview
+        int[] numberFreq = getNumberFreq(patternsList1, patternsList2);
         List<String> freqList = new ArrayList<>();
-        for (int i = 0; i < numberFreq.length-1; i++)
+        for (int i = 0; i < numberFreq.length - 1; i++)
         {
-            freqList.add(i+" --> "+Integer.toString(numberFreq[i])+" times");
+            freqList.add(i + " --> " + Integer.toString(numberFreq[i]) + " times");
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,  R.layout.spinner_item, freqList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, freqList);
         NumFreqListView.setAdapter(adapter);
 
+        scoreTextView.setText("Your overall score is: "+getScore(patternsList1,patternsList2,
+                longRunsNum,closedCurvesNum,longCurvesNum,longEdgesNum,shortEdgesNum,
+                shortOrthEdgesNum,longOrthEdgesNum));
     }
 
     public int getStatData(List<String> patternsList1, List<String> patternsList2, String[] data)
@@ -161,5 +166,28 @@ public class StatisticsActivity extends AppCompatActivity
         }
 
         return numberFreq;
+    }
+
+    public int getScore(List<String> patternsList1, List<String> patternsList2, int longRunsNum,
+                        int closedCurvesNum, int longCurvesNum, int longEdgesNum, int shortEdgesNum,
+                        int shortOrthEdgesNum, int longOrthEdgesNum)
+    {
+        //For each extra number the user gets +1 point
+        int points = 0;
+        for (String pattern : patternsList1)
+        {
+            points += pattern.length() - 4;
+        }
+        for (String pattern : patternsList2)
+        {
+            points += pattern.length() - 4;
+        }
+
+        //For each orthogonal edges get +1, as so the closed curves and short edges
+        points += shortOrthEdgesNum + shortEdgesNum + closedCurvesNum;
+        //And all others get +2 points
+        points += (longRunsNum+longCurvesNum+longEdgesNum+longOrthEdgesNum)*2;
+
+        return points;
     }
 }

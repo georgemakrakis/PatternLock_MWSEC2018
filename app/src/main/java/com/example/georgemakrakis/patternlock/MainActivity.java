@@ -460,9 +460,7 @@ public class MainActivity extends AppCompatActivity
 
             if (flagAtThree && renterCounter < 3)
             {
-                if(patternNow.equals(patternsList.get(patternsList.size()-1)) ||
-                        patternNow.equals(patternsList.get(patternsList.size()-2)) ||
-                        patternNow.equals(patternsList.get(patternsList.size()-3)))
+                if(patternNow.equals(patternsList.get(patternsList.size()-1)))
                 {
                     ShowDialog("You have entered the same pattern twice, please enter a different pattern");
 

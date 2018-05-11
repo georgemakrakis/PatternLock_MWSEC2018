@@ -1,0 +1,4 @@
+Username;Attempt_number;Screen_resolution;Pattern_number_A;Pattern_number_B;Xcoord_of_central_Point_of_A;Ycoord_of_central_Point_of_A;Xcoord_of_central_Point_of_B;Ycoord_of_central_Point_of_B;First_Xcoord_of_A;First_Ycoord_of_A;Last_ Xcoord_of_B;Last_Ycoord_of_B;Distance_AB;Intertime_AB;Avg_speeadAB;Avg_pressure
+icsd15088;7;1920, 1080;2;5;2100.0;420.0;2100.0;1260.0;318.67502;1061.8313;202.0;1054.0;116.93754375350049;1097177448;-1.98555400727251E14;8.0
+icsd15088;7;1920, 1080;5;4;2100.0;1260.0;1260.0;1260.0;318.67502;1061.8313;202.0;1054.0;116.93754375350049;1097177448;-1.98555400727251E14;12.0
+icsd15088;7;1920, 1080;4;3;1260.0;1260.0;420.0;1260.0;318.67502;1061.8313;202.0;1054.0;116.93754375350049;1097177448;-1.98555400727251E14;11.0

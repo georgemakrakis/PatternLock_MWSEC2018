@@ -493,6 +493,23 @@ public class MainActivity extends AppCompatActivity
                         patternMetadataList.clear();
                         pairMetadataList.clear();
 
+                        //Removing elements on specific purposes
+                        if(finalRawPatternFile.size()<=13)
+                        {
+                            finalRawPatternFile.clear();
+                            Log.d("Debug Listsssss",finalRawPatternFile.size()+"");
+                        }
+                        else
+                        {
+//                            for(int i=13;i<finalRawPatternFile.size()-1;i++)
+//                            {
+//                                finalRawPatternFile.remove(i);
+//                            }
+                            finalRawPatternFile.subList(13, finalRawPatternFile.size()).clear();
+
+                            Log.d("Debug Listsssss",finalRawPatternFile.size()+"");
+                        }
+
                         rawPatternsList.clear();
 
                         return false;

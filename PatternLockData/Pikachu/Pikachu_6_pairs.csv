@@ -1,5 +1,0 @@
-Username;Attempt_number;Screen_resolution;Pattern_number_A;Pattern_number_B;Xcoord_of_central_Point_of_A;Ycoord_of_central_Point_of_A;Xcoord_of_central_Point_of_B;Ycoord_of_central_Point_of_B;First_Xcoord_of_A;First_Ycoord_of_A;Last_ Xcoord_of_B;Last_Ycoord_of_B;Distance_AB;Intertime_AB;Avg_speeadAB;Avg_pressure
-Pikachu;7;1920, 1080;8;7;2100.0;2100.0;1260.0;2100.0;254.8833;842.517;254.0;749.0;93.52120025671992;923592292;-1.01297573907083E14;8.0
-Pikachu;7;1920, 1080;7;6;1260.0;2100.0;420.0;2100.0;254.8833;842.517;254.0;749.0;93.52120025671992;923592292;-1.01297573907083E14;12.0
-Pikachu;7;1920, 1080;6;3;420.0;2100.0;420.0;1260.0;254.8833;842.517;254.0;749.0;93.52120025671992;923592292;-1.01297573907083E14;12.0
-Pikachu;7;1920, 1080;3;0;420.0;1260.0;420.0;420.0;254.8833;842.517;254.0;749.0;93.52120025671992;923592292;-1.01297573907083E14;10.0
